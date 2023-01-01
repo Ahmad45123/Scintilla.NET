@@ -26,7 +26,12 @@
 		<DefineConstants>Linux</DefineConstants>
 	</PropertyGroup>
 
+	<PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+	  <PlatformTarget>AnyCPU</PlatformTarget>
+	</PropertyGroup>
+
 	<ItemGroup>
+	  <ProjectReference Include="..\Scintilla.NET.EtoForms.GTK\Scintilla.NET.EtoForms.GTK.csproj" />
 	  <ProjectReference Include="..\Scintilla.NET.Eto\Scintilla.NET.Eto.csproj" />
 	</ItemGroup>
 </Project>

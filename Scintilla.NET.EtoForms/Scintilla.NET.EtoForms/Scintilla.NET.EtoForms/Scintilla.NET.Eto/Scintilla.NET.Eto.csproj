@@ -16,6 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Scintilla.NET.EtoForms.GTK\Scintilla.NET.EtoForms.GTK.csproj" />
     <ProjectReference Include="..\Scintilla.NET.EtoForms\Scintilla.NET.EtoForms.csproj" />
   </ItemGroup>
 

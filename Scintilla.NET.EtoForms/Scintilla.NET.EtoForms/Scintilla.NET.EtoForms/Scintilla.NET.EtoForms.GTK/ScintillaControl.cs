@@ -18,7 +18,7 @@ public class ScintillaControlHandler : GtkControl<Widget, ScintillaControl, Cont
     /// Create a new Scintilla widget. The returned pointer can be added to a container and displayed in the same way as other widgets.
     /// </summary>
     /// <returns>IntPtr.</returns>
-    [DllImport("scintilla", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("scintilla", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     static extern IntPtr scintilla_new();
 
     /// <summary>
@@ -33,6 +33,20 @@ public class ScintillaControlHandler : GtkControl<Widget, ScintillaControl, Cont
     static extern IntPtr scintilla_send_message(IntPtr ptr, int iMessage, IntPtr wParam, IntPtr lParam);
 
     readonly IntPtr editor;
+    private static bool initialized;
+
+    private static void EtoInitialize() {
+        if (initialized)
+        {
+            return;
+        }
+        
+        if (!initialized && RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            Eto.Platform.Instance.Add<IScintillaControl>(() => new ScintillaControlHandler());
+            initialized = true;
+        }
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ScintillaControlHandler"/> class.
@@ -43,6 +57,7 @@ public class ScintillaControlHandler : GtkControl<Widget, ScintillaControl, Cont
         var nativeControl = new Widget(editor);
         Control = nativeControl;
     }
+    
 
     /// <inheritdoc cref="IScintillaControl.SetParameter"/>
     public IntPtr SetParameter(int message, IntPtr wParam, IntPtr lParam)

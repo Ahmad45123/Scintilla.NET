@@ -31,6 +31,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
+using Scintilla.NET.EtoForms;
+using Scintilla.NET.EtoForms.GTK;
 
 
 namespace TestApplication;
@@ -38,7 +40,11 @@ public class FormMain : Form
 {
     public FormMain()
     {
-        this.Content = new Scintilla.NET.Eto.Scintilla();
-        this.Size = new Size(600, 500);
+        Scintilla.NET.Eto.Scintilla.PlatformInitialize();
+        ClientSize = new Size(500, 500);
+        base.Size = new Size(600, 500);
+        var scintilla = new Scintilla.NET.Eto.Scintilla();
+        Content = scintilla;
+        scintilla.Size = new Size(500, 500);
     }
 }

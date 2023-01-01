@@ -1,6 +1,8 @@
-﻿using Eto.Forms;
+﻿using Eto;
+using Eto.Forms;
+using Scintilla.NET.EtoForms;
+using Scintilla.NET.EtoForms.GTK;
 using TestApplication;
-using Xceed.Wpf.Toolkit.Core.Converters;
 
 public static class Program
 {
