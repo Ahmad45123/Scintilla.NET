@@ -1,0 +1,23 @@
+<Project Sdk="Eto.Forms/2.7.2">
+
+  <PropertyGroup>
+	  <TargetFramework>netstandard2.1</TargetFramework>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	  <Nullable>enable</Nullable>
+	  <DocumentationFile>bin\$(Configuration)\Scintilla.NET.EtoForms.GTK.xml</DocumentationFile>
+	  <OutputType>Library</OutputType>
+	  <Title>Scintilla.NET.EtoForms</Title>
+	  <Company>VPKSoft</Company>
+	  <Description>Eto.Forms wrapper for Scintilla control.</Description>
+	  <Copyright>Copyright © VPKSoft 2023</Copyright>
+	  <BuildPlatform>Gtk</BuildPlatform>
+	  <PackageProjectUrl>https://github.com/VPKSoft/ScintillaNET</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/VPKSoft/ScintillaNET</RepositoryUrl>
+	  <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Scintilla.NET.EtoForms\Scintilla.NET.EtoForms.csproj" />
+  </ItemGroup>
+
+</Project>
