@@ -1,7 +1,4 @@
-﻿using Eto;
-using Eto.Forms;
-using Scintilla.NET.EtoForms;
-using Scintilla.NET.EtoForms.GTK;
+﻿using Eto.Forms;
 using TestApplication;
 
 public static class Program

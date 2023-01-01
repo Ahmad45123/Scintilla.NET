@@ -25,15 +25,14 @@ SOFTWARE.
 #endregion
 
 using Eto.Forms;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Scintilla.NET.EtoForms;
 
-
+/// <summary>
+/// An interface for the Scintilla control.
+/// Implements the <see cref="Eto.Forms.Control.IHandler" />
+/// </summary>
+/// <seealso cref="Eto.Forms.Control.IHandler" />
 public interface IScintillaControl : Control.IHandler
 {
     /// <summary>

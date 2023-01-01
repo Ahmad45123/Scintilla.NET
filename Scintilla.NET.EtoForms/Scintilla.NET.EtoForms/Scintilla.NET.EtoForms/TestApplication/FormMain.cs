@@ -24,15 +24,8 @@ SOFTWARE.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
-using Scintilla.NET.EtoForms;
-using Scintilla.NET.EtoForms.GTK;
 
 
 namespace TestApplication;
