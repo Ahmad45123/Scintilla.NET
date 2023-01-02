@@ -32,13 +32,22 @@ using Scintilla.NET.EtoForms.GTK;
 namespace TestApplication;
 public class FormMain : Form
 {
+    private Scintilla.NET.Eto.Scintilla scintilla; 
+    
     public FormMain()
     {
         Scintilla.NET.Eto.Scintilla.PlatformInitialize();
         ClientSize = new Size(500, 500);
         base.Size = new Size(600, 500);
-        var scintilla = new Scintilla.NET.Eto.Scintilla();
+        scintilla = new Scintilla.NET.Eto.Scintilla();
         Content = scintilla;
         scintilla.Size = new Size(500, 500);
+        
+        Shown += OnShown;
+    }
+
+    private void OnShown(object? sender, EventArgs e)
+    {
+        MessageBox.Show(scintilla.Lexilla.LexerCount.ToString());
     }
 }
