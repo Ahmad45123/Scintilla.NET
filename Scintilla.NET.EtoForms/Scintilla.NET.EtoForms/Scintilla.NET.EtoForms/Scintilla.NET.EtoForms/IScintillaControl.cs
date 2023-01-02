@@ -80,4 +80,9 @@ public interface IScintillaControl : Control.IHandler
     /// <param name="lParam">The message <c>lParam</c> field.</param>
     /// <returns>The message result as <see cref="IntPtr"/>.</returns>
     IntPtr DirectMessage(IntPtr scintillaPointer, int message, IntPtr wParam, IntPtr lParam);
+    
+    /// <summary>
+    /// Gets the Lexilla instance.
+    /// </summary>
+    ILexilla Lexilla { get; }
 }

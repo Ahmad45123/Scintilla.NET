@@ -56,6 +56,7 @@ public class ScintillaControlHandler : GtkControl<Widget, ScintillaControl, Cont
         editor = scintilla_new();
         var nativeControl = new Widget(editor);
         Control = nativeControl;
+        Lexilla = new Lexilla();
     }
     
 
@@ -88,4 +89,6 @@ public class ScintillaControlHandler : GtkControl<Widget, ScintillaControl, Cont
     {
         return scintilla_send_message(sciPtr, msg, wParam, lParam);
     }
+
+    public ILexilla Lexilla { get; }
 }

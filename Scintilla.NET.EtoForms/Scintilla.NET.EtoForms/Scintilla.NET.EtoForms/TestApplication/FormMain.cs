@@ -26,6 +26,7 @@ SOFTWARE.
 
 using Eto.Drawing;
 using Eto.Forms;
+using Scintilla.NET.EtoForms.GTK;
 
 
 namespace TestApplication;
