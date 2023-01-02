@@ -55,4 +55,12 @@ public class Scintilla: ScintillaControl
             initialized = true;
         }        
     }
+
+    private IScintillaControl BaseControl => (IScintillaControl)Handler;
+
+    /// <summary>
+    /// Gets the Lexilla library access.
+    /// </summary>
+    /// <value>The lexilla library access.</value>
+    public ILexilla Lexilla => BaseControl.Lexilla;
 }

@@ -33,20 +33,6 @@ public class ScintillaControlHandler : GtkControl<Widget, ScintillaControl, Cont
     static extern IntPtr scintilla_send_message(IntPtr ptr, int iMessage, IntPtr wParam, IntPtr lParam);
 
     readonly IntPtr editor;
-    private static bool initialized;
-
-    private static void EtoInitialize() {
-        if (initialized)
-        {
-            return;
-        }
-        
-        if (!initialized && RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-            Eto.Platform.Instance.Add<IScintillaControl>(() => new ScintillaControlHandler());
-            initialized = true;
-        }
-    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ScintillaControlHandler"/> class.
@@ -56,9 +42,24 @@ public class ScintillaControlHandler : GtkControl<Widget, ScintillaControl, Cont
         editor = scintilla_new();
         var nativeControl = new Widget(editor);
         Control = nativeControl;
-        Lexilla = new Lexilla();
+        Lexilla = LexillaSingleton;
     }
     
+
+    private static Lexilla? lexillaInstance;
+
+    /// <summary>
+    /// Gets the singleton instance of the <see cref="Lexilla"/> class.
+    /// </summary>
+    /// <value>The singleton instance of the <see cref="Lexilla"/> class.</value>
+    private static ILexilla LexillaSingleton
+    {
+        get
+        {
+            lexillaInstance ??= new Lexilla();
+            return lexillaInstance;
+        }
+    }
 
     /// <inheritdoc cref="IScintillaControl.SetParameter"/>
     public IntPtr SetParameter(int message, IntPtr wParam, IntPtr lParam)
@@ -90,5 +91,9 @@ public class ScintillaControlHandler : GtkControl<Widget, ScintillaControl, Cont
         return scintilla_send_message(sciPtr, msg, wParam, lParam);
     }
 
+    /// <summary>
+    /// Gets the Lexilla library access.
+    /// </summary>
+    /// <value>The lexilla library access.</value>
     public ILexilla Lexilla { get; }
 }
