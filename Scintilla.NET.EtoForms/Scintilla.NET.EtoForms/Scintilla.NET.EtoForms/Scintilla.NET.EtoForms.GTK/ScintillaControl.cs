@@ -19,7 +19,7 @@ public class ScintillaControlHandler : GtkControl<Widget, ScintillaControl, Cont
     /// </summary>
     /// <returns>IntPtr.</returns>
     [DllImport("scintilla", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    static extern IntPtr scintilla_new();
+    private static extern IntPtr scintilla_new();
 
     /// <summary>
     /// The main entry point allows sending any of the messages described in this document.
@@ -30,7 +30,10 @@ public class ScintillaControlHandler : GtkControl<Widget, ScintillaControl, Cont
     /// <param name="lParam">The message <c>lParam</c> field.</param>
     /// <returns>IntPtr.</returns>
     [DllImport("scintilla", CallingConvention = CallingConvention.Cdecl)]
-    static extern IntPtr scintilla_send_message(IntPtr ptr, int iMessage, IntPtr wParam, IntPtr lParam);
+    private static extern IntPtr scintilla_send_message(IntPtr ptr, int iMessage, IntPtr wParam, IntPtr lParam);
+
+    [DllImport("scintilla", CallingConvention = CallingConvention.Cdecl)]
+    private static extern void scintilla_release_resources();
 
     readonly IntPtr editor;
 
@@ -89,6 +92,12 @@ public class ScintillaControlHandler : GtkControl<Widget, ScintillaControl, Cont
     public IntPtr DirectMessage(IntPtr sciPtr, int msg, IntPtr wParam, IntPtr lParam)
     {
         return scintilla_send_message(sciPtr, msg, wParam, lParam);
+    }
+
+    /// <inheritdoc cref="IScintillaControl.ReleaseUnmanagedResources" />
+    public void ReleaseUnmanagedResources()
+    {
+        scintilla_release_resources();
     }
 
     /// <summary>

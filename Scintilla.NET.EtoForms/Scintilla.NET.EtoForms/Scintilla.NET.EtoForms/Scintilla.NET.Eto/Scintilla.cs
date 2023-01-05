@@ -40,6 +40,14 @@ public class Scintilla: ScintillaControl
     private static bool initialized;
 
     /// <summary>
+    /// Initializes static members of the <see cref="Scintilla"/> class.
+    /// </summary>
+    static Scintilla()
+    {
+        PlatformInitialize();
+    }
+
+    /// <summary>
     /// Initialization of the Scintilla control for the appropriate Eto platform.
     /// </summary>
     public static void PlatformInitialize()
