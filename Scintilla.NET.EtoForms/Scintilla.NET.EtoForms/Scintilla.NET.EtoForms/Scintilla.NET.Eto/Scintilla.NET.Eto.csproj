@@ -20,4 +20,17 @@
     <ProjectReference Include="..\Scintilla.NET.EtoForms\Scintilla.NET.EtoForms.csproj" />
   </ItemGroup>
 
+<ItemGroup>
+	<None Include="library/liblexilla.so">
+		<Pack>true</Pack>
+		<PackagePath>runtimes/linux-x64/native</PackagePath>
+		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</None>
+	<None Include="library/libscintilla.so">
+		<Pack>true</Pack>
+		<PackagePath>runtimes/linux-x64/native</PackagePath>
+		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</None>
+</ItemGroup>	
+	
 </Project>
