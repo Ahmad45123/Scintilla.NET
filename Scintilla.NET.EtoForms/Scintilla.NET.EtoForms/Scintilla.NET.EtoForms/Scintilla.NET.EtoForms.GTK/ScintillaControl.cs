@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Reflection;
+using System.Runtime.InteropServices;
 using Eto.Forms;
 using Eto.GtkSharp.Forms;
 using Gtk;
@@ -37,6 +38,33 @@ public class ScintillaControlHandler : GtkControl<Widget, ScintillaControl, Cont
 
     readonly IntPtr editor;
 
+    static ScintillaControlHandler()
+    {
+        NativeLibrary.SetDllImportResolver(Assembly.GetExecutingAssembly(), DllImportResolver);
+    }
+    
+    private static IntPtr DllImportResolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
+    {
+        if (libraryName == "scintilla")
+        {
+            var location = Path.GetDirectoryName(assembly.Location);
+            var file = Path.Combine(location!, "library", "libscintilla.so");
+            
+            return NativeLibrary.Load(file, assembly, searchPath);
+        }
+        
+        if (libraryName == "liblexilla")
+        {
+            var location = Path.GetDirectoryName(assembly.Location);
+            var file = Path.Combine(location!, "library", "liblexilla.so");
+
+            return NativeLibrary.Load(file, assembly, searchPath);
+        }
+
+        // Fallback to default import resolver.
+        return IntPtr.Zero;
+    }    
+    
     /// <summary>
     /// Initializes a new instance of the <see cref="ScintillaControlHandler"/> class.
     /// </summary>

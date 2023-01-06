@@ -1,7 +1,6 @@
 <Project Sdk="Eto.Forms/2.7.2">
 
   <PropertyGroup>
-	  <TargetFramework>netstandard2.1</TargetFramework>
 	  <ImplicitUsings>enable</ImplicitUsings>
 	  <Nullable>enable</Nullable>
 	  <DocumentationFile>bin\$(Configuration)\Scintilla.NET.Eto.xml</DocumentationFile>
@@ -13,6 +12,7 @@
 	  <PackageProjectUrl>https://github.com/VPKSoft/ScintillaNET</PackageProjectUrl>
 	  <RepositoryUrl>https://github.com/VPKSoft/ScintillaNET</RepositoryUrl>
 	  <LangVersion>latest</LangVersion>
+	  <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
