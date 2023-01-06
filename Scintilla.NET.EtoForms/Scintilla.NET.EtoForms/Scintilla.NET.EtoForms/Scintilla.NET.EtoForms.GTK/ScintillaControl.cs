@@ -30,41 +30,14 @@ public class ScintillaControlHandler : GtkControl<Widget, ScintillaControl, Cont
     /// <param name="wParam">The message <c>wParam</c> field.</param>
     /// <param name="lParam">The message <c>lParam</c> field.</param>
     /// <returns>IntPtr.</returns>
-    [DllImport("scintilla", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("libscintilla", CallingConvention = CallingConvention.Cdecl)]
     private static extern IntPtr scintilla_send_message(IntPtr ptr, int iMessage, IntPtr wParam, IntPtr lParam);
 
-    [DllImport("scintilla", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("libscintilla", CallingConvention = CallingConvention.Cdecl)]
     private static extern void scintilla_release_resources();
 
     readonly IntPtr editor;
 
-    static ScintillaControlHandler()
-    {
-        NativeLibrary.SetDllImportResolver(Assembly.GetExecutingAssembly(), DllImportResolver);
-    }
-    
-    private static IntPtr DllImportResolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
-    {
-        if (libraryName == "scintilla")
-        {
-            var location = Path.GetDirectoryName(assembly.Location);
-            var file = Path.Combine(location!, "library", "libscintilla.so");
-            
-            return NativeLibrary.Load(file, assembly, searchPath);
-        }
-        
-        if (libraryName == "liblexilla")
-        {
-            var location = Path.GetDirectoryName(assembly.Location);
-            var file = Path.Combine(location!, "library", "liblexilla.so");
-
-            return NativeLibrary.Load(file, assembly, searchPath);
-        }
-
-        // Fallback to default import resolver.
-        return IntPtr.Zero;
-    }    
-    
     /// <summary>
     /// Initializes a new instance of the <see cref="ScintillaControlHandler"/> class.
     /// </summary>

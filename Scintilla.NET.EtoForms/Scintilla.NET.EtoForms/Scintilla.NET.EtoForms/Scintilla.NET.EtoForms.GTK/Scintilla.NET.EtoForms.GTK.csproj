@@ -13,11 +13,24 @@
 	  <PackageProjectUrl>https://github.com/VPKSoft/ScintillaNET</PackageProjectUrl>
 	  <RepositoryUrl>https://github.com/VPKSoft/ScintillaNET</RepositoryUrl>
 	  <LangVersion>latest</LangVersion>
-	  <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+	  <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Scintilla.NET.EtoForms\Scintilla.NET.EtoForms.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="liblexilla.so">
+      <Pack>true</Pack>
+      <PackagePath>runtimes/linux-x64/native</PackagePath>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="libscintilla.so">
+      <Pack>true</Pack>
+      <PackagePath>runtimes/linux-x64/native</PackagePath>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
