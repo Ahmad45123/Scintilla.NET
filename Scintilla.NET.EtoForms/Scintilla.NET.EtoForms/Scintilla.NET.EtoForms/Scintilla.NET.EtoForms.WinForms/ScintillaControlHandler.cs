@@ -28,6 +28,9 @@ public class ScintillaControlHandler : WindowsControl<ScintillaWinForms, Scintil
     [DllImport("user32.dll", EntryPoint = "SendMessageW", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern IntPtr SendMessage(HandleRef hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
+    readonly IntPtr editor;
+    
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ScintillaControlHandler"/> class.
     /// </summary>
