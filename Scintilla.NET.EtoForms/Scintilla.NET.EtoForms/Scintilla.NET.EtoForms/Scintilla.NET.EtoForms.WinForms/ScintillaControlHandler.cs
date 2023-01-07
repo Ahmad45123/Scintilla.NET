@@ -38,7 +38,6 @@ public class ScintillaControlHandler : WindowsControl<ScintillaWinForms, Scintil
     {
 //        editor = SciPointer;
         var nativeControl = new ScintillaWinForms();
-        this.
         Control = nativeControl;
         Lexilla = LexillaSingleton;
     }
