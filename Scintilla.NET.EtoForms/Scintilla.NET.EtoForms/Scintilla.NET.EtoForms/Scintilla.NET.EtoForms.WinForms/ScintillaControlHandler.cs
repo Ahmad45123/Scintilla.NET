@@ -1,27 +1,19 @@
-﻿using System.Reflection;
-using System.Runtime.InteropServices;
-using Eto.Forms;
-using Eto.GtkSharp.Forms;
-using Gtk;
+﻿using System.Runtime.InteropServices;
+using Eto.WinForms.Forms;
+using Control = Eto.Forms.Control;
 
-namespace Scintilla.NET.EtoForms.GTK;
+namespace Scintilla.NET.EtoForms.WinForms;
 
 /// <summary>
 /// Scintilla control handler for GTK.
-/// Implements the <see cref="Eto.GtkSharp.Forms.GtkControl{TControl, TWidget, TCallback}" />
+/// Implements the <see cref="Eto.WinForms.Forms.WindowsControl{TControl, TWidget, TCallback}" />
 /// Implements the <see cref="IScintillaControl" />
 /// </summary>
-/// <seealso cref="Eto.GtkSharp.Forms.GtkControl{TControl, TWidget, TCallback}" />
+/// <seealso cref="Eto.WinForms.Forms.WindowsControl{TControl, TWidget, TCallback}" />
 /// <seealso cref="IScintillaControl" />
-public class ScintillaControlHandler : GtkControl<Widget, ScintillaControl, Control.ICallback>, IScintillaControl
-{
-    /// <summary>
-    /// Create a new Scintilla widget. The returned pointer can be added to a container and displayed in the same way as other widgets.
-    /// </summary>
-    /// <returns>IntPtr.</returns>
-    [DllImport("scintilla", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    private static extern IntPtr scintilla_new();
 
+public class ScintillaControlHandler : WindowsControl<ScintillaWinForms, ScintillaControl, Control.ICallback>, IScintillaControl
+{
     /// <summary>
     /// The main entry point allows sending any of the messages described in this document.
     /// </summary>
@@ -30,21 +22,20 @@ public class ScintillaControlHandler : GtkControl<Widget, ScintillaControl, Cont
     /// <param name="wParam">The message <c>wParam</c> field.</param>
     /// <param name="lParam">The message <c>lParam</c> field.</param>
     /// <returns>IntPtr.</returns>
-    [DllImport("libscintilla", CallingConvention = CallingConvention.Cdecl)]
-    private static extern IntPtr scintilla_send_message(IntPtr ptr, int iMessage, IntPtr wParam, IntPtr lParam);
+    [DllImport("Scintilla.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr Scintilla_DirectFunction(IntPtr ptr, int iMessage, IntPtr wParam, IntPtr lParam);
 
-    [DllImport("libscintilla", CallingConvention = CallingConvention.Cdecl)]
-    private static extern void scintilla_release_resources();
-
-    readonly IntPtr editor;
+    [DllImport("user32.dll", EntryPoint = "SendMessageW", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern IntPtr SendMessage(HandleRef hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ScintillaControlHandler"/> class.
     /// </summary>
     public ScintillaControlHandler()
     {
-        editor = scintilla_new();
-        var nativeControl = new Widget(editor);
+//        editor = SciPointer;
+        var nativeControl = new ScintillaWinForms();
+        this.
         Control = nativeControl;
         Lexilla = LexillaSingleton;
     }
@@ -68,7 +59,7 @@ public class ScintillaControlHandler : GtkControl<Widget, ScintillaControl, Cont
     /// <inheritdoc cref="IScintillaControl.SetParameter"/>
     public IntPtr SetParameter(int message, IntPtr wParam, IntPtr lParam)
     {
-        return scintilla_send_message(editor, message, wParam, lParam);
+        return Scintilla_DirectFunction(editor, message, wParam, lParam);
     }
 
     /// <inheritdoc cref="IScintillaControl.DirectMessage(int)"/>
@@ -92,13 +83,13 @@ public class ScintillaControlHandler : GtkControl<Widget, ScintillaControl, Cont
     /// <inheritdoc cref="IScintillaControl.DirectMessage(int, IntPtr, IntPtr)"/>
     public IntPtr DirectMessage(IntPtr sciPtr, int msg, IntPtr wParam, IntPtr lParam)
     {
-        return scintilla_send_message(sciPtr, msg, wParam, lParam);
+        return Scintilla_DirectFunction(sciPtr, msg, wParam, lParam);
     }
 
     /// <inheritdoc cref="IScintillaControl.ReleaseUnmanagedResources" />
     public void ReleaseUnmanagedResources()
     {
-        scintilla_release_resources();
+
     }
 
     /// <summary>

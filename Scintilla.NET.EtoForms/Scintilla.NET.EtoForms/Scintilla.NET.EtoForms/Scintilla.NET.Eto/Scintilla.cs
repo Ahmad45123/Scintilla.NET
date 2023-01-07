@@ -26,7 +26,6 @@ SOFTWARE.
 
 using System.Runtime.InteropServices;
 using Scintilla.NET.EtoForms;
-using Scintilla.NET.EtoForms.GTK;
 
 namespace Scintilla.NET.Eto;
 
@@ -59,9 +58,23 @@ public class Scintilla: ScintillaControl
         
         if (!initialized && RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
-            global::Eto.Platform.Instance.Add<IScintillaControl>(() => new ScintillaControlHandler());
+            global::Eto.Platform.Instance.Add<IScintillaControl>(() => new EtoForms.GTK.ScintillaControlHandler());
             initialized = true;
-        }        
+        }
+
+        if (!initialized && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            if (global::Eto.Platform.Instance.IsWpf)
+            {
+                global::Eto.Platform.Instance.Add<IScintillaControl>(() => new EtoForms.Wpf.ScintillaControlHandler());
+            }
+
+            if (global::Eto.Platform.Instance.IsWinForms)
+            {
+                global::Eto.Platform.Instance.Add<IScintillaControl>(() => new EtoForms.WinForms.ScintillaControlHandler());
+            }
+            initialized = true;
+        }
     }
 
     private IScintillaControl BaseControl => (IScintillaControl)Handler;

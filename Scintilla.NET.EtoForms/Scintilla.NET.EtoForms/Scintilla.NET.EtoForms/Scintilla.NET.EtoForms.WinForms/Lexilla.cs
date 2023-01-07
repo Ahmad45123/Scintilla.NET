@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 /*
 MIT License
 
@@ -24,36 +24,30 @@ SOFTWARE.
 */
 #endregion
 
-using Eto.Drawing;
-using Eto.Forms;
+using System.Runtime.InteropServices;
 
+namespace Scintilla.NET.EtoForms.WinForms;
 
-
-namespace TestApplication;
-public class FormMain : Form
+public class Lexilla: ILexilla
 {
-    private Scintilla.NET.Eto.Scintilla scintilla; 
-    
-    public FormMain()
+    /// <inheritdoc cref="ILexilla.LexerCount"/>
+    public int LexerCount => GetLexerCount();
+
+    /// <summary>
+    /// Gets the name of the lexer.
+    /// </summary>
+    /// <param name="index">The index.</param>
+    /// <returns>System.String.</returns>
+    public string GetLexerName(uint index)
     {
-        Scintilla.NET.Eto.Scintilla.PlatformInitialize();
-        ClientSize = new Size(500, 500);
-        base.Size = new Size(600, 500);
-        scintilla = new Scintilla.NET.Eto.Scintilla();
-        Content = new TableLayout
-        {
-            Rows =
-            {
-                new TableRow(scintilla),
-            },
-        };
-        scintilla.Size = new Size(500, 500);
-        
-        Shown += OnShown;
+        var pointer = Marshal.AllocHGlobal(1024);
+        GetLexerName(index, pointer, 1024);
+        return Marshal.PtrToStringAnsi(pointer) ?? string.Empty;
     }
 
-    private void OnShown(object? sender, EventArgs e)
-    {
-        //MessageBox.Show(scintilla.Lexilla.LexerCount.ToString());
-    }
+    [DllImport("Lexilla.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    private static extern int GetLexerCount();
+
+    [DllImport("Lexilla.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    private static extern void GetLexerName(uint index, IntPtr name, int buflength);
 }

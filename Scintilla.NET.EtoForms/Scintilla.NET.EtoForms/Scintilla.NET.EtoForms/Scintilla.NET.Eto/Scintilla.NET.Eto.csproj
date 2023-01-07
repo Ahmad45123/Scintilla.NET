@@ -12,12 +12,13 @@
 	  <PackageProjectUrl>https://github.com/VPKSoft/ScintillaNET</PackageProjectUrl>
 	  <RepositoryUrl>https://github.com/VPKSoft/ScintillaNET</RepositoryUrl>
 	  <LangVersion>latest</LangVersion>
-	  <TargetFramework>netstandard2.1</TargetFramework>
+	  <TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Scintilla.NET.EtoForms.GTK\Scintilla.NET.EtoForms.GTK.csproj" />
+    <ProjectReference Include="..\Scintilla.NET.EtoForms.WinForms\Scintilla.NET.EtoForms.WinForms.csproj" />
+    <ProjectReference Include="..\Scintilla.NET.EtoForms.Wpf\Scintilla.NET.EtoForms.Wpf.csproj" />
     <ProjectReference Include="..\Scintilla.NET.EtoForms\Scintilla.NET.EtoForms.csproj" />
   </ItemGroup>	
-	
 </Project>

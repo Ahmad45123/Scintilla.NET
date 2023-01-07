@@ -11,7 +11,7 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<!--<BuildPlatform>Gtk</BuildPlatform>-->
+		<BuildPlatform>Windows</BuildPlatform>
 		<Copyright>Copyright © VPKSoft 2023</Copyright>
 		<PackageProjectUrl>https://github.com/VPKSoft/amp-multi</PackageProjectUrl>
 		<Company>VPKSoft</Company>
@@ -38,7 +38,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Scintilla.NET.EtoForms.GTK\Scintilla.NET.EtoForms.GTK.csproj" />
+	  <ProjectReference Include="..\Scintilla.NET.EtoForms.WinForms\Scintilla.NET.EtoForms.WinForms.csproj" />
 	  <ProjectReference Include="..\Scintilla.NET.Eto\Scintilla.NET.Eto.csproj" />
 	</ItemGroup>
 </Project>
