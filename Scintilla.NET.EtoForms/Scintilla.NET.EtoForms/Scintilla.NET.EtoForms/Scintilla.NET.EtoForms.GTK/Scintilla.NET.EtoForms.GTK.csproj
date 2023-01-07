@@ -1,4 +1,10 @@
 <Project Sdk="Eto.Forms/2.7.2">
+	<PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
+		<TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
+		<TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+	</PropertyGroup>
 
   <PropertyGroup>
 	  <ImplicitUsings>enable</ImplicitUsings>
@@ -13,7 +19,7 @@
 	  <PackageProjectUrl>https://github.com/VPKSoft/ScintillaNET</PackageProjectUrl>
 	  <RepositoryUrl>https://github.com/VPKSoft/ScintillaNET</RepositoryUrl>
 	  <LangVersion>latest</LangVersion>
-	  <TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
+	  <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
   </PropertyGroup>
 
   <ItemGroup>

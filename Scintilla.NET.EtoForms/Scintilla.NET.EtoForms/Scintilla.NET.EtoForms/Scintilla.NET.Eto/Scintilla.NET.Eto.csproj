@@ -12,7 +12,7 @@
 	  <PackageProjectUrl>https://github.com/VPKSoft/ScintillaNET</PackageProjectUrl>
 	  <RepositoryUrl>https://github.com/VPKSoft/ScintillaNET</RepositoryUrl>
 	  <LangVersion>latest</LangVersion>
-	  <TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
+	  <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
