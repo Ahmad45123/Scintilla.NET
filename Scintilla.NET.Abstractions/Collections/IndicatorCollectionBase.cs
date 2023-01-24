@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.ComponentModel;
+using Scintilla.NET.Abstractions.Interfaces;
 using static Scintilla.NET.Abstractions.ScintillaConstants;
 
 namespace Scintilla.NET.Abstractions.Collections;

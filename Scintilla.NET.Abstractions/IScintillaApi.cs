@@ -28,13 +28,14 @@ using System.Collections;
 using System.Text;
 using Scintilla.NET.Abstractions.Collections;
 using Scintilla.NET.Abstractions.Enumerations;
+using Scintilla.NET.Abstractions.Interfaces;
 
 namespace Scintilla.NET.Abstractions;
 
 /// <summary>
 /// An interface for interacting with the Scintilla API
 /// </summary>
-public interface IScintillaApi
+public interface IScintillaApi : IHasEncoding
 {
     /// <summary>
     /// The platform-depended implementation of the <see cref="DirectMessage(int, IntPtr, IntPtr)"/> method.
@@ -89,12 +90,6 @@ public interface IScintillaApi
     void MarkerDeleteAll(int marker);
 
     /// <summary>
-    /// Gets the encoding of the <see cref="IScintillaApi"/> control interface.
-    /// </summary>
-    /// <value>The encoding of the control.</value>
-    Encoding Encoding { get; }
-
-    /// <summary>
     /// Gets the length of the text in the control.
     /// </summary>
     /// <returns>The number of characters in the document.</returns>
@@ -117,23 +112,9 @@ public interface IScintillaApi
 }
 
 /// <summary>
-/// An interface for the Scintilla native event notifications.
-/// </summary>
-/// <typeparam name="TEventArgs">The type of the event arguments.</typeparam>
-public interface IScintillaNotificationEvent<TEventArgs>
-    where TEventArgs : System.EventArgs
-{
-    /// <summary>
-    /// The Scintilla native notification.
-    /// </summary>
-    // ReSharper disable once InconsistentNaming
-    event EventHandler<TEventArgs> SCNotification;
-}
-
-/// <summary>
 /// Interface IScintillaApi
 /// Implements the <see cref="Scintilla.NET.Abstractions.IScintillaApi" />
-/// Implements the <see cref="Scintilla.NET.Abstractions.IScintillaNotificationEvent{TEventArgs}" />
+/// Implements the <see cref="IScintillaNotificationEvent{TEventArgs}" />
 /// </summary>
 /// <typeparam name="TMarkers">The type of the markers collection of the Scintilla control implementation.</typeparam>
 /// <typeparam name="TStyles">The type of the styles collection of the Scintilla control implementation.</typeparam>
@@ -151,7 +132,7 @@ public interface IScintillaNotificationEvent<TEventArgs>
 /// <typeparam name="TBitmap">The type of the bitmap used in the platform.</typeparam>
 /// <typeparam name="TColor">The type of the color used in the platform.</typeparam>
 /// <seealso cref="Scintilla.NET.Abstractions.IScintillaApi" />
-/// <seealso cref="Scintilla.NET.Abstractions.IScintillaNotificationEvent{TEventArgs}" />
+/// <seealso cref="IScintillaNotificationEvent{TEventArgs}" />
 public interface IScintillaApi<
     out TMarkers, 
     out TStyles,
@@ -174,7 +155,7 @@ public interface IScintillaApi<
     where TLines : LineCollectionBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>, IEnumerable
     where TMargins : MarginCollectionBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>, IEnumerable
     where TSelections : SelectionCollectionBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>, IEnumerable
-    where TEventArgs : System.EventArgs
+    where TEventArgs : EventArgs
     where TMarker: MarkerBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>
     where TStyle : StyleBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>
     where TIndicator : IndicatorBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>

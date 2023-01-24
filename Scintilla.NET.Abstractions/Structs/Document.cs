@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ScintillaNET;
+﻿namespace Scintilla.NET.Abstractions.Structs;
 
 /// <summary>
 /// A <see cref="Scintilla" /> document.
@@ -11,7 +9,10 @@ namespace ScintillaNET;
 /// </remarks>
 public struct Document
 {
-    internal IntPtr Value;
+    /// <summary>
+    /// The pointer to the document.
+    /// </summary>
+    public IntPtr Value;
 
     /// <summary>
     /// A read-only field that represents an uninitialized document.

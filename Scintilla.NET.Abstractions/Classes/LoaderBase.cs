@@ -1,24 +1,24 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Text;
+using Scintilla.NET.Abstractions.Interfaces;
+using Scintilla.NET.Abstractions.Structs;
 using static Scintilla.NET.Abstractions.ScintillaConstants;
-using static Scintilla.NET.Abstractions.ScintillaApiStructs;
 
-namespace ScintillaNET;
+namespace Scintilla.NET.Abstractions.Classes;
 
-internal sealed class Loader : ILoader
+public abstract class LoaderBase : ILoader
 {
     private readonly IntPtr self;
-    private readonly ILoaderVTable32 loader32;
-    private readonly ILoaderVTable64 loader64;
+    private readonly ScintillaApiStructs.ILoaderVTable32 loader32;
+    private readonly ScintillaApiStructs.ILoaderVTable64 loader64;
     private readonly Encoding encoding;
 
-    public unsafe bool AddData(char[] data, int length)
+    public virtual unsafe bool AddData(char[] data, int length)
     {
         if (data != null)
         {
-            length = Helpers.Clamp(length, 0, data.Length);
-            var bytes = Helpers.GetBytes(data, length, encoding, zeroTerminated: false);
+            length = HelpersGeneral.Clamp(length, 0, data.Length);
+            var bytes = HelpersGeneral.GetBytes(data, length, encoding, zeroTerminated: false);
             fixed (byte* bp = bytes)
             {
                 var status = (IntPtr.Size == 4 ? loader32.AddData(self, bp, bytes.Length) : loader64.AddData(self, bp, bytes.Length));
@@ -30,20 +30,20 @@ internal sealed class Loader : ILoader
         return true;
     }
 
-    public Document ConvertToDocument()
+    public virtual Document ConvertToDocument()
     {
         var ptr = (IntPtr.Size == 4 ? loader32.ConvertToDocument(self) : loader64.ConvertToDocument(self));
         var document = new Document { Value = ptr };
         return document;
     }
 
-    public int Release()
+    public virtual int Release()
     {
         var count = (IntPtr.Size == 4 ? loader32.Release(self) : loader64.Release(self));
         return count;
     }
 
-    public unsafe Loader(IntPtr ptr, Encoding encoding)
+    protected unsafe LoaderBase(IntPtr ptr, Encoding encoding)
     {
         this.self = ptr;
         this.encoding = encoding;
@@ -61,9 +61,15 @@ internal sealed class Loader : ILoader
         // architecture, the function calling conventions can be different.
 
         IntPtr vfptr = *(IntPtr*)ptr;
-        if(IntPtr.Size == 4)
-            loader32 = (ILoaderVTable32)Marshal.PtrToStructure(vfptr, typeof(ILoaderVTable32));
+        if (IntPtr.Size == 4)
+        {
+            loader32 = (ScintillaApiStructs.ILoaderVTable32)Marshal.PtrToStructure(vfptr,
+                typeof(ScintillaApiStructs.ILoaderVTable32));
+        }
         else
-            loader64 = (ILoaderVTable64)Marshal.PtrToStructure(vfptr, typeof(ILoaderVTable64));
+        {
+            loader64 = (ScintillaApiStructs.ILoaderVTable64)Marshal.PtrToStructure(vfptr,
+                typeof(ScintillaApiStructs.ILoaderVTable64));
+        }
     }
 }

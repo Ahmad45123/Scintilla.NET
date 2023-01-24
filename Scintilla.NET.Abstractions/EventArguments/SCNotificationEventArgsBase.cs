@@ -1,4 +1,4 @@
-﻿using static Scintilla.NET.Abstractions.ScintillaApiStructs;
+﻿using static Scintilla.NET.Abstractions.Classes.ScintillaApiStructs;
 
 namespace Scintilla.NET.Abstractions.EventArguments;
 

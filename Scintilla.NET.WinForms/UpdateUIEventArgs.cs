@@ -4,7 +4,7 @@ using Scintilla.NET.Abstractions.EventArguments;
 namespace ScintillaNET;
 
 /// <summary>
-/// Provides data for the <see cref="Scintilla.UpdateUI" /> event.
+/// Provides data for the <see cref="Scintilla.UpdateUi" /> event.
 /// </summary>
 // ReSharper disable once InconsistentNaming, part of the API
 public class UpdateUIEventArgs : UpdateUIEventArgsBase

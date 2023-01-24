@@ -5,18 +5,18 @@ using System.Drawing;
 using System.Drawing.Design;
 using System.Globalization;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using Scintilla.NET.Abstractions;
 using Scintilla.NET.Abstractions.Enumerations;
+using Scintilla.NET.Abstractions.Interfaces;
 using Scintilla.NET.Abstractions.Structs;
 using static Scintilla.NET.Abstractions.ScintillaConstants;
-using static Scintilla.NET.Abstractions.ScintillaApiStructs;
+using static Scintilla.NET.Abstractions.Classes.ScintillaApiStructs;
 using Bitmap = System.Drawing.Bitmap;
 using TabDrawMode = Scintilla.NET.Abstractions.Enumerations.TabDrawMode;
 
@@ -26,13 +26,23 @@ namespace ScintillaNET;
 /// Represents a Scintilla editor control.
 /// </summary>
 [Docking(DockingBehavior.Ask)]
-public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollection, IndicatorCollection, LineCollection, MarginCollection, SelectionCollection, SCNotificationEventArgs, Marker, Style, Indicator, Line, Margin, Selection, Bitmap, Color>
+public class Scintilla : Control,
+    IScintillaApi<MarkerCollection, StyleCollection, IndicatorCollection, LineCollection, MarginCollection,
+        SelectionCollection, SCNotificationEventArgs, Marker, Style, Indicator, Line, Margin, Selection, Bitmap, Color>,
+    IScintillaProperties<Color>,
+    IScintillaCollectionProperties<MarkerCollection, StyleCollection, IndicatorCollection, LineCollection, MarginCollection,
+        SelectionCollection, SCNotificationEventArgs, Marker, Style, Indicator, Line, Margin, Selection, Bitmap, Color>,
+    IScintillaMethods<Color, Keys, Bitmap>,
+    IScintillaEvents<MarkerCollection, StyleCollection, IndicatorCollection, LineCollection, MarginCollection,
+        SelectionCollection, SCNotificationEventArgs, Marker, Style, Indicator, Line, Margin, Selection, Bitmap, Color, Keys, 
+        AutoCSelectionEventArgs, BeforeModificationEventArgs, ChangeAnnotationEventArgs, CharAddedEventArgs, DoubleClickEventArgs,
+        DwellEventArgs, CallTipClickEventArgs, HotspotClickEventArgs, IndicatorClickEventArgs, IndicatorReleaseEventArgs,
+        InsertCheckEventArgs, MarginClickEventArgs, NeedShownEventArgs, StyleNeededEventArgs, UpdateUIEventArgs, SCNotificationEventArgs>
 {
     static Scintilla()
     {
         string basePath = LocateNativeDllDirectory();
         modulePathScintilla = Path.Combine(basePath, "Scintilla.dll");
-#if SCINTILLA5
         modulePathLexilla = Path.Combine(basePath, "Lexilla.dll");
 
         try
@@ -47,7 +57,6 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
             scintillaVersion = "ERROR";
             lexillaVersion = "ERROR";
         }
-#endif
     }
 
     private static string LocateNativeDllDirectory()
@@ -75,16 +84,12 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     // Static module data
     private static readonly string modulePathScintilla;
 
-#if SCINTILLA5
     private static readonly string modulePathLexilla;
-#endif
 
     private static IntPtr moduleHandle;
     private static NativeMethods.Scintilla_DirectFunction directFunction;
-#if SCINTILLA5
     private static IntPtr lexillaHandle;
     private static Lexilla lexilla;
-#endif
 
     // Events
     private static readonly object scNotificationEventKey = new object();
@@ -135,27 +140,15 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     // Double-click
     private bool doubleClick;
 
-    // Pinned data
+    // Pinned dataDwellStart
     private IntPtr fillUpChars;
 
     // For highlight calculations
     private string lastCallTip = string.Empty;
-
-    /// <summary>
-    /// A constant used to specify an infinite mouse dwell wait time.
-    /// </summary>
-    public const int TimeForever = SC_TIME_FOREVER;
-
-    /// <summary>
-    /// A constant used to specify an invalid document position.
-    /// </summary>
-    public const int InvalidPosition = INVALID_POSITION;
-
     #endregion Fields
 
     #region Methods
         
-#if SCINTILLA5
     /// <summary>
     /// Sets the name of the lexer by its name.
     /// </summary>
@@ -174,7 +167,6 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
 
         return true;
     }
-#endif
 
     /// <summary>
     /// Increases the reference count of the specified document by 1.
@@ -217,12 +209,12 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     }
 
     /// <summary>
-    /// Allocates some number of substyles for a particular base style. Substyles are allocated contiguously.
+    /// Allocates some number of sub-styles for a particular base style. Substyles are allocated contiguously.
     /// </summary>
     /// <param name="styleBase">The lexer style integer</param>
-    /// <param name="numberStyles">The amount of substyles to allocate</param>
-    /// <returns>Returns the first substyle number allocated.</returns>
-    public int AllocateSubstyles(int styleBase, int numberStyles)
+    /// <param name="numberStyles">The amount of sub-styles to allocate</param>
+    /// <returns>Returns the first sub-style number allocated.</returns>
+    public int AllocateSubStyles(int styleBase, int numberStyles)
     {
         return this.DirectMessage(SCI_ALLOCATESUBSTYLES, new IntPtr(styleBase), new IntPtr(numberStyles)).ToInt32();
     }
@@ -382,7 +374,7 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     /// <summary>
     /// Styles the specified character position with the <see cref="Style.BraceBad" /> style when there is an unmatched brace.
     /// </summary>
-    /// <param name="position">The zero-based document position of the unmatched brace character or <seealso cref="InvalidPosition"/> to remove the highlight.</param>
+    /// <param name="position">The zero-based document position of the unmatched brace character or <seealso cref="IApiConstants.InvalidPosition"/> to remove the highlight.</param>
     public void BraceBadLight(int position)
     {
         position = Helpers.Clamp(position, -1, TextLength);
@@ -397,7 +389,7 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     /// </summary>
     /// <param name="position1">The zero-based document position of the open brace character.</param>
     /// <param name="position2">The zero-based document position of the close brace character.</param>
-    /// <remarks>Brace highlighting can be removed by specifying <see cref="InvalidPosition" /> for <paramref name="position1" /> and <paramref name="position2" />.</remarks>
+    /// <remarks>Brace highlighting can be removed by specifying <see cref="IApiConstants.InvalidPosition" /> for <paramref name="position1" /> and <paramref name="position2" />.</remarks>
     /// <seealso cref="HighlightGuide" />
     public void BraceHighlight(int position1, int position2)
     {
@@ -419,7 +411,7 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     /// The brace characters handled are '(', ')', '[', ']', '{', '}', '&lt;', and '&gt;'.
     /// </summary>
     /// <param name="position">The zero-based document position of a brace character to start the search from for a matching brace character.</param>
-    /// <returns>The zero-based document position of the corresponding matching brace or <see cref="InvalidPosition" /> it no matching brace could be found.</returns>
+    /// <returns>The zero-based document position of the corresponding matching brace or <see cref="IApiConstants.InvalidPosition" /> it no matching brace could be found.</returns>
     /// <remarks>A match only occurs if the style of the matching brace is the same as the starting brace. Nested braces are handled correctly.</remarks>
     public int BraceMatch(int position)
     {
@@ -989,9 +981,9 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     }
 
     /// <summary>
-    /// Frees all allocated substyles.
+    /// Frees all allocated sub-styles.
     /// </summary>
-    public void FreeSubstyles()
+    public void FreeSubStyles()
     {
         DirectMessage(SCI_FREESUBSTYLES);
     }
@@ -1051,7 +1043,6 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
         return Lines.ByteToCharPosition(pos);
     }
 
-#if SCINTILLA5
     private static readonly string scintillaVersion;
     private static readonly string lexillaVersion;
 
@@ -1064,7 +1055,6 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     /// Gets the product version of the Lexilla.dll user by the control.
     /// </summary>
     public string LexillaVersion => lexillaVersion;
-#endif
 
     /// <summary>
     /// Gets the Primary style associated with the given Secondary style.
@@ -1170,31 +1160,31 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     }
 
     /// <summary>
-    /// Gets the lexer base style of a substyle.
+    /// Gets the lexer base style of a sub-style.
     /// </summary>
-    /// <param name="subStyle">The integer index of the substyle</param>
+    /// <param name="subStyle">The integer index of the sub-style</param>
     /// <returns>Returns the base style, else returns the argument.</returns>
-    public int GetStyleFromSubstyle(int subStyle)
+    public int GetStyleFromSubStyle(int subStyle)
     {
         return DirectMessage(SCI_GETSTYLEFROMSUBSTYLE, new IntPtr(subStyle)).ToInt32();
     }
 
     /// <summary>
-    /// Gets the length of the number of substyles allocated for a given lexer base style.
+    /// Gets the length of the number of sub-styles allocated for a given lexer base style.
     /// </summary>
     /// <param name="styleBase">The lexer style integer</param>
-    /// <returns>Returns the length of the substyles allocated for a base style.</returns>
-    public int GetSubstylesLength(int styleBase)
+    /// <returns>Returns the length of the sub-styles allocated for a base style.</returns>
+    public int GetSubStylesLength(int styleBase)
     {
         return DirectMessage(SCI_GETSUBSTYLESLENGTH, new IntPtr(styleBase)).ToInt32();
     }
 
     /// <summary>
-    /// Gets the start index of the substyles for a given lexer base style.
+    /// Gets the start index of the sub-styles for a given lexer base style.
     /// </summary>
     /// <param name="styleBase">The lexer style integer</param>
-    /// <returns>Returns the start of the substyles allocated for a base style.</returns>
-    public int GetSubstylesStart(int styleBase)
+    /// <returns>Returns the start of the sub-styles allocated for a base style.</returns>
+    public int GetSubStylesStart(int styleBase)
     {
         return DirectMessage(SCI_GETSUBSTYLESSTART, new IntPtr(styleBase)).ToInt32();
     }
@@ -1940,7 +1930,7 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     }
 
     /// <summary>
-    /// Raises the <see cref="UpdateUI" /> event.
+    /// Raises the <see cref="UpdateUi" /> event.
     /// </summary>
     /// <param name="e">An <see cref="UpdateUIEventArgs" /> that contains the event data.</param>
     protected virtual void OnUpdateUI(UpdateUIEventArgs e)
@@ -2015,7 +2005,7 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     /// Retrieves the data type of the specified property name for the current <see cref="Lexer" />.
     /// </summary>
     /// <param name="name">A property name supported by the current <see cref="Lexer" />.</param>
-    /// <returns>One of the <see cref="PropertyType" /> enumeration values. The default is <see cref="Scintilla.NET.Abstractions.Enumerations.PropertyType.Boolean" />.</returns>
+    /// <returns>One of the <see cref="PropertyType" /> enumeration values. The default is <see cref="bool" />.</returns>
     /// <remarks>A list of supported property names for the current <see cref="Lexer" /> can be obtained by calling <see cref="PropertyNames" />.</remarks>
     public unsafe PropertyType PropertyType(string name)
     {
@@ -2400,15 +2390,15 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     }
 
     /// <summary>
-    /// Similar to <see cref="SetKeywords" /> but for substyles.
+    /// Similar to <see cref="SetKeywords" /> but for sub-styles.
     /// </summary>
-    /// <param name="style">The substyle integer index</param>
+    /// <param name="style">The sub-style integer index</param>
     /// <param name="identifiers">A list of words separated by whitespace (space, tab, '\n', '\r') characters.</param>
     public unsafe void SetIdentifiers(int style, string identifiers)
     {
-        var baseStyle = GetStyleFromSubstyle(style);
-        var min = GetSubstylesStart(baseStyle);
-        var length = GetSubstylesLength(baseStyle);
+        var baseStyle = GetStyleFromSubStyle(style);
+        var min = GetSubStylesStart(baseStyle);
+        var length = GetSubStylesLength(baseStyle);
         var max = (length > 0) ? min + length - 1 : min;
 
         style = Helpers.Clamp(style, min, max);
@@ -3083,8 +3073,6 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     #endregion Methods
 
     #region Properties
-
-
     /// <summary>
     /// Gets or sets the bi-directionality of the Scintilla control.
     /// </summary>
@@ -3663,7 +3651,7 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     [DefaultValue(false)]
     [Category("Indentation")]
     [Description("Determines whether backspace deletes a character, or unindents.")]
-    public bool BackspaceUnindents
+    public bool BackspaceUnIndents
     {
         get
         {
@@ -3981,7 +3969,7 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     /// </summary>
     /// <returns>
     /// One of the <see cref="Scintilla.NET.Abstractions.Enumerations.CaretStyle" /> enumeration values.
-    /// The default is <see cref="Scintilla.NET.Abstractions.Enumerations.CaretStyle.Line" />.
+    /// The default is <see cref="Line" />.
     /// </returns>
     [DefaultValue(CaretStyle.Line)]
     [Category("Caret")]
@@ -4005,7 +3993,7 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     /// <returns>The width of the caret in pixels. The default is 1 pixel.</returns>
     /// <remarks>
     /// The caret width can only be set to a value of 0, 1, 2 or 3 pixels and is only effective
-    /// when the <see cref="CaretStyle" /> property is set to <see cref="Scintilla.NET.Abstractions.Enumerations.CaretStyle.Line" />.
+    /// when the <see cref="CaretStyle" /> property is set to <see cref="Line" />.
     /// </remarks>
     [DefaultValue(1)]
     [Category("Caret")]
@@ -4035,10 +4023,7 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
             {
                 // Load the native Scintilla library
                 moduleHandle = NativeMethods.LoadLibrary(modulePathScintilla);
-
-#if SCINTILLA5
                 lexillaHandle = NativeMethods.LoadLibrary(modulePathLexilla);
-#endif
 
                 if (moduleHandle == IntPtr.Zero)
                 {
@@ -4066,9 +4051,7 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
                 }
 
                 // Get the native Lexilla.dll methods
-#if SCINTILLA5
                 lexilla = new Lexilla(lexillaHandle);
-#endif
 
                 // Create a managed callback
                 directFunction = (NativeMethods.Scintilla_DirectFunction)Marshal.GetDelegateForFunctionPointer(
@@ -4205,8 +4188,8 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     /// <returns>The current <see cref="Document" />.</returns>
     /// <remarks>
     /// Setting this property is equivalent to calling <see cref="ReleaseDocument" /> on the current document, and
-    /// calling <see cref="CreateDocument" /> if the new <paramref name="value" /> is <see cref="ScintillaNET.Document.Empty" /> or
-    /// <see cref="AddRefDocument" /> if the new <paramref name="value" /> is not <see cref="ScintillaNET.Document.Empty" />.
+    /// calling <see cref="CreateDocument" /> if the new <paramref name="value" /> is <see cref="Scintilla.NET.Abstractions.Structs.Document.Empty" /> or
+    /// <see cref="AddRefDocument" /> if the new <paramref name="value" /> is not <see cref="Scintilla.NET.Abstractions.Structs.Document.Empty" />.
     /// </remarks>
     [Browsable(false)]
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -4237,7 +4220,7 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
 
     /// <summary>
     /// Gets or sets the background color to use when indicating long lines with
-    /// <see cref="Scintilla.NET.Abstractions.Enumerations.EdgeMode.Background" />.
+    /// <see cref="VisualStyleElement.TrayNotify.Background" />.
     /// </summary>
     /// <returns>The background Color. The default is Silver.</returns>
     [DefaultValue(typeof(Color), "Silver")]
@@ -4262,8 +4245,8 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     /// </summary>
     /// <returns>The number of columns in a long line. The default is 0.</returns>
     /// <remarks>
-    /// When using <see cref="Scintilla.NET.Abstractions.Enumerations.EdgeMode.Line"/>, a column is defined as the width of a space character in the <see cref="Style.Default" /> style.
-    /// When using <see cref="Scintilla.NET.Abstractions.Enumerations.EdgeMode.Background" /> a column is equal to a character (including tabs).
+    /// When using <see cref="Line"/>, a column is defined as the width of a space character in the <see cref="Style.Default" /> style.
+    /// When using <see cref="VisualStyleElement.TrayNotify.Background" /> a column is equal to a character (including tabs).
     /// </remarks>
     [DefaultValue(0)]
     [Category("Long Lines")]
@@ -4687,28 +4670,19 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
                 return;
             }
 
-#if SCINTILLA5
             if (!SetLexerByName(value))
             {
                 throw new InvalidOperationException(@$"Lexer with the name of '{value}' was not found.");
             }
-#elif SCINTILLA4
-                if (NameConstantMap.ContainsValue(value))
-                {
-                    Lexer = (Lexer) NameConstantMap.First(f => f.Value == value)
-                        .Key;
-                }
-#endif
 
             lexerName = value;
         }
     }
 
-#if SCINTILLA5
     /// <summary>
     /// Gets or sets the current lexer.
     /// </summary>
-    /// <returns>One of the <see cref="Lexer" /> enumeration values. The default is <see cref="Scintilla.NET.Abstractions.Enumerations.Lexer.Container" />.</returns>
+    /// <returns>One of the <see cref="Lexer" /> enumeration values. The default is <see cref="Container" />.</returns>
     /// <exception cref="InvalidOperationException">
     /// No lexer name was found with the specified value.
     /// </exception>
@@ -4761,27 +4735,6 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
             SetLexerByName(lexerName);
         }
     }
-#elif SCINTILLA4
-        /// <summary>
-        /// Gets or sets the current lexer.
-        /// </summary>
-        /// <returns>One of the <see cref="Lexer" /> enumeration values. The default is <see cref="ScintillaNET.Lexer.Container" />.</returns>
-        [DefaultValue(Lexer.Container)]
-        [Category("Lexing")]
-        [Description("The current lexer.")]
-        public Lexer Lexer
-        {
-            get
-            {
-                return (Lexer)DirectMessage(SCI_GETLEXER);
-            }
-            set
-            {
-                var lexer = (int)value;
-                DirectMessage(SCI_SETLEXER, new IntPtr(lexer));
-            }
-        }
-#endif
 
     /// <summary>
     /// Gets or sets the current lexer by name.
@@ -4958,7 +4911,7 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     /// The time in milliseconds the mouse must linger to generate a <see cref="DwellStart" /> event
     /// or <see cref="Scintilla.TimeForever" /> if dwell events are disabled.
     /// </returns>
-    [DefaultValue(TimeForever)]
+    [DefaultValue(ApiConstants.TimeForever)]
     [Category("Behavior")]
     [Description("The time in milliseconds the mouse must linger to generate a dwell start event. A value of 10000000 disables dwell events.")]
     public int MouseDwellTime
@@ -5052,7 +5005,7 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     /// <summary>
     /// Gets or sets the behavior when pasting text into multiple selections.
     /// </summary>
-    /// <returns>One of the <see cref="Scintilla.NET.Abstractions.Enumerations.MultiPaste" /> enumeration values. The default is <see cref="Scintilla.NET.Abstractions.Enumerations.MultiPaste.Once" />.</returns>
+    /// <returns>One of the <see cref="MultiPaste" /> enumeration values. The default is <see cref="global::Scintilla.NET.Abstractions.Enumerations.MultiPaste.Once" />.</returns>
     [DefaultValue(MultiPaste.Once)]
     [Category("Multiple Selection")]
     [Description("Determines how pasted text is applied to multiple selections.")]
@@ -5076,7 +5029,7 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     [DefaultValue(false)]
     [Category("Behavior")]
     [Description("Puts the caret into overtype mode.")]
-    public bool Overtype
+    public bool OverType
     {
         get
         {
@@ -5321,7 +5274,7 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     /// <summary>
     /// Gets or sets the search flags used when searching text.
     /// </summary>
-    /// <returns>A bitwise combination of <see cref="Scintilla.NET.Abstractions.Enumerations.SearchFlags" /> values. The default is <see cref="Scintilla.NET.Abstractions.Enumerations.SearchFlags.None" />.</returns>
+    /// <returns>A bitwise combination of <see cref="global::Scintilla.NET.Abstractions.Enumerations.SearchFlags" /> values. The default is <see cref="global::Scintilla.NET.Abstractions.Enumerations.SearchFlags.None" />.</returns>
     /// <seealso cref="SearchInTarget" />
     [Browsable(false)]
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -5349,11 +5302,8 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
         get
         {
             // NOTE: For some reason the length returned by this API includes the terminating NULL
-#if SCINTILLA5
             var length = DirectMessage(SCI_GETSELTEXT).ToInt32();
-#else
-                var length = DirectMessage(SCI_GETSELTEXT).ToInt32() - 1;
-#endif
+
             if (length <= 0)
                 return string.Empty;
 
@@ -5453,9 +5403,9 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     /// </summary>
     /// <returns>
     /// One of the <see cref="Status" /> enumeration values.
-    /// The default is <see cref="Scintilla.NET.Abstractions.Enumerations.Status.Ok" />.
+    /// The default is <see cref="global::Scintilla.NET.Abstractions.Enumerations.Status.Ok" />.
     /// </returns>
-    /// <remarks>The status can be reset by setting the property to <see cref="Scintilla.NET.Abstractions.Enumerations.Status.Ok" />.</remarks>
+    /// <remarks>The status can be reset by setting the property to <see cref="global::Scintilla.NET.Abstractions.Enumerations.Status.Ok" />.</remarks>
     [Browsable(false)]
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Status Status
@@ -5483,8 +5433,8 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     /// Gets or sets how tab characters are represented when whitespace is visible.
     /// </summary>
     /// <returns>
-    /// One of the <see cref="Scintilla.NET.Abstractions.Enumerations.TabDrawMode" /> enumeration values.
-    /// The default is <see cref="Scintilla.NET.Abstractions.Enumerations.TabDrawMode.LongArrow" />.
+    /// One of the <see cref="global::Scintilla.NET.Abstractions.Enumerations.TabDrawMode" /> enumeration values.
+    /// The default is <see cref="global::Scintilla.NET.Abstractions.Enumerations.TabDrawMode.LongArrow" />.
     /// </returns>
     /// <seealso cref="ViewWhitespace" />
     [DefaultValue(TabDrawMode.LongArrow)]
@@ -5623,7 +5573,7 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     /// </summary>
     /// <returns>
     /// One of the <see cref="Technology" /> enumeration values.
-    /// The default is <see cref="Scintilla.NET.Abstractions.Enumerations.Technology.Default" />.
+    /// The default is <see cref="global::Scintilla.NET.Abstractions.Enumerations.Technology.Default" />.
     /// </returns>
     [DefaultValue(Technology.Default)]
     [Category("Misc")]
@@ -5913,8 +5863,8 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     /// Gets or sets the line wrapping indent mode.
     /// </summary>
     /// <returns>
-    /// One of the <see cref="Scintilla.NET.Abstractions.Enumerations.WrapIndentMode" /> enumeration values.
-    /// The default is <see cref="Scintilla.NET.Abstractions.Enumerations.WrapIndentMode.Fixed" />.
+    /// One of the <see cref="global::Scintilla.NET.Abstractions.Enumerations.WrapIndentMode" /> enumeration values.
+    /// The default is <see cref="global::Scintilla.NET.Abstractions.Enumerations.WrapIndentMode.Fixed" />.
     /// </returns>
     [DefaultValue(WrapIndentMode.Fixed)]
     [Category("Line Wrapping")]
@@ -6298,7 +6248,7 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     /// </summary>
     [Category("Notifications")]
     [Description("Occurs when text is deleted.")]
-    public event EventHandler<ModificationEventArgs> Delete
+    public event EventHandler<BeforeModificationEventArgs> Delete
     {
         add
         {
@@ -6503,7 +6453,7 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     /// </summary>
     [Category("Notifications")]
     [Description("Occurs when text is inserted.")]
-    public event EventHandler<ModificationEventArgs> Insert
+    public event EventHandler<BeforeModificationEventArgs> Insert
     {
         add
         {
@@ -6697,7 +6647,7 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     /// Occurs when the control is about to display or print text and requires styling.
     /// </summary>
     /// <remarks>
-    /// This event is only raised when <see cref="Lexer" /> is set to <see cref="Scintilla.NET.Abstractions.Enumerations.Lexer.Container" />.
+    /// This event is only raised when <see cref="Lexer" /> is set to <see cref="Container" />.
     /// The last position styled correctly can be determined by calling <see cref="GetEndStyled" />.
     /// </remarks>
     /// <seealso cref="GetEndStyled" />
@@ -6721,7 +6671,7 @@ public class Scintilla : Control, IScintillaApi<MarkerCollection, StyleCollectio
     /// </summary>
     [Category("Notifications")]
     [Description("Occurs when the control UI is updated.")]
-    public event EventHandler<UpdateUIEventArgs> UpdateUI
+    public event EventHandler<UpdateUIEventArgs> UpdateUi
     {
         add
         {

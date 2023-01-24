@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Diagnostics;
+using Scintilla.NET.Abstractions.Interfaces;
 using Scintilla.NET.Abstractions.UtilityClasses;
 using static Scintilla.NET.Abstractions.ScintillaConstants;
-using static Scintilla.NET.Abstractions.ScintillaApiStructs;
+using static Scintilla.NET.Abstractions.Classes.ScintillaApiStructs;
 
 namespace Scintilla.NET.Abstractions.Collections;
 // TODO Revisit this following Scintilla v3.7.0 because is said to be better about character handling
