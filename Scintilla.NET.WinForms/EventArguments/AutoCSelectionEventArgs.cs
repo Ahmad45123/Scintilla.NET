@@ -19,7 +19,7 @@ public class AutoCSelectionEventArgs : AutoCSelectionEventArgsBase<MarkerCollect
     /// <param name="text">A pointer to the selected auto-completion text.</param>
     /// <param name="ch">The character that caused the completion.</param>
     /// <param name="listCompletionMethod">A value indicating the way in which the completion occurred.</param>
-    public AutoCSelectionEventArgs(IScintillaApi<MarkerCollection, StyleCollection, IndicatorCollection, LineCollection, MarginCollection, SelectionCollection, SCNotificationEventArgs, Marker, Style, Indicator, Line, Margin, Selection, Bitmap, Color> scintilla, int bytePosition, IntPtr text, int ch, ListCompletionMethod listCompletionMethod) : base(scintilla, bytePosition, text, ch, listCompletionMethod)
+    public AutoCSelectionEventArgs(IScintillaApi<MarkerCollection, StyleCollection, IndicatorCollection, LineCollection, MarginCollection, SelectionCollection, SCNotificationEventArgs, Marker, Style, Indicator, Line, Margin, Selection, Bitmap, Color> scintilla, int bytePosition, nint text, int ch, ListCompletionMethod listCompletionMethod) : base(scintilla, bytePosition, text, ch, listCompletionMethod)
     {
     }
 }

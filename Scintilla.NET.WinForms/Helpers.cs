@@ -30,7 +30,7 @@ internal static class Helpers
 
     public static long CopyTo(this Stream source, Stream destination)
     {
-        byte[] buffer = new byte[2048];
+        var buffer = new byte[2048];
         int bytesRead;
         long totalBytes = 0;
         while ((bytesRead = source.Read(buffer, 0, buffer.Length)) > 0)
@@ -50,9 +50,9 @@ internal static class Helpers
         var bytes = new byte[4 * image.Width * image.Height];
 
         var i = 0;
-        for (int y = 0; y < image.Height; y++)
+        for (var y = 0; y < image.Height; y++)
         {
-            for (int x = 0; x < image.Width; x++)
+            for (var x = 0; x < image.Width; x++)
             {
                 var color = image.GetPixel(x, y);
                 bytes[i++] = color.R;
@@ -78,10 +78,14 @@ internal static class Helpers
     public static int Clamp(int value, int min, int max)
     {
         if (value < min)
+        {
             return min;
+        }
 
         if (value > max)
+        {
             return max;
+        }
 
         return value;
     }
@@ -89,7 +93,9 @@ internal static class Helpers
     public static int ClampMin(int value, int min)
     {
         if (value < min)
+        {
             return min;
+        }
 
         return value;
     }
@@ -126,7 +132,7 @@ internal static class Helpers
                 // Patch header
                 pos = ms.Position;
                 ms.Seek(INDEX_START_HTML, SeekOrigin.Begin);
-                ms.Write((bytes = Encoding.ASCII.GetBytes(ms.Length.ToString("D8"))), 0, bytes.Length);
+                ms.Write(bytes = Encoding.ASCII.GetBytes(ms.Length.ToString("D8")), 0, bytes.Length);
                 ms.Seek(pos, SeekOrigin.Begin);
 
                 tw.WriteLine("<html>");
@@ -140,7 +146,7 @@ internal static class Helpers
                 // Patch header
                 pos = ms.Position;
                 ms.Seek(INDEX_START_FRAGMENT, SeekOrigin.Begin);
-                ms.Write((bytes = Encoding.ASCII.GetBytes(ms.Length.ToString("D8"))), 0, bytes.Length);
+                ms.Write(bytes = Encoding.ASCII.GetBytes(ms.Length.ToString("D8")), 0, bytes.Length);
                 ms.Seek(pos, SeekOrigin.Begin);
                 tw.WriteLine("<!--StartFragment -->");
 
@@ -154,19 +160,27 @@ internal static class Helpers
                 tw.Write(" background-color: #{0:X2}{1:X2}{2:X2};", (styles[Style.Default].BackColor >> 0) & 0xFF, (styles[Style.Default].BackColor >> 8) & 0xFF, (styles[Style.Default].BackColor >> 16) & 0xFF);
                 tw.WriteLine(" }");
 
-                for (int i = 0; i < styles.Length; i++)
+                for (var i = 0; i < styles.Length; i++)
                 {
                     if (!styles[i].Used)
+                    {
                         continue;
+                    }
 
                     tw.Write("span.s{0} {{", i);
                     tw.Write(@" font-family: ""{0}"";", styles[i].FontName);
                     tw.Write(" font-size: {0}pt;", styles[i].SizeF);
                     tw.Write(" font-weight: {0};", styles[i].Weight);
                     if (styles[i].Italic != 0)
+                    {
                         tw.Write(" font-style: italic;");
+                    }
+
                     if (styles[i].Underline != 0)
+                    {
                         tw.Write(" text-decoration: underline;");
+                    }
+
                     tw.Write(" background-color: #{0:X2}{1:X2}{2:X2};", (styles[i].BackColor >> 0) & 0xFF, (styles[i].BackColor >> 8) & 0xFF, (styles[i].BackColor >> 16) & 0xFF);
                     tw.Write(" color: #{0:X2}{1:X2}{2:X2};", (styles[i].ForeColor >> 0) & 0xFF, (styles[i].ForeColor >> 8) & 0xFF, (styles[i].ForeColor >> 16) & 0xFF);
                     switch ((StyleCase)styles[i].Case)
@@ -180,7 +194,10 @@ internal static class Helpers
                     }
 
                     if (styles[i].Visible == 0)
+                    {
                         tw.Write(" visibility: hidden;");
+                    }
+
                     tw.WriteLine(" }");
                 }
 
@@ -193,11 +210,11 @@ internal static class Helpers
 
                 tw.AutoFlush = true;
                 var lastStyle = Style.Default;
-                var unicodeLineEndings = ((scintilla.DirectMessage(SCI_GETLINEENDTYPESACTIVE).ToInt32() & SC_LINE_END_TYPE_UNICODE) > 0);
+                var unicodeLineEndings = (scintilla.DirectMessage(SCI_GETLINEENDTYPESACTIVE).ToInt32() & SC_LINE_END_TYPE_UNICODE) > 0;
                 foreach (var seg in styledSegments)
                 {
                     var endOffset = seg.Offset + seg.Count;
-                    for (int i = seg.Offset; i < endOffset; i += 2)
+                    for (var i = seg.Offset; i < endOffset; i += 2)
                     {
                         var ch = seg.Array[i];
                         var style = seg.Array[i + 1];
@@ -230,7 +247,9 @@ internal static class Helpers
                                 if (i + 2 < endOffset)
                                 {
                                     if (seg.Array[i + 2] == (byte)'\n')
+                                    {
                                         i += 2;
+                                    }
                                 }
 
                                 // Either way, this is a line break
@@ -295,7 +314,7 @@ internal static class Helpers
                 // Patch header
                 pos = ms.Position;
                 ms.Seek(INDEX_END_FRAGMENT, SeekOrigin.Begin);
-                ms.Write((bytes = Encoding.ASCII.GetBytes(ms.Length.ToString("D8"))), 0, bytes.Length);
+                ms.Write(bytes = Encoding.ASCII.GetBytes(ms.Length.ToString("D8")), 0, bytes.Length);
                 ms.Seek(pos, SeekOrigin.Begin);
                 tw.WriteLine("<!--EndFragment-->");
 
@@ -306,7 +325,7 @@ internal static class Helpers
                 // Patch header
                 pos = ms.Position;
                 ms.Seek(INDEX_END_HTML, SeekOrigin.Begin);
-                ms.Write((bytes = Encoding.ASCII.GetBytes(ms.Length.ToString("D8"))), 0, bytes.Length);
+                ms.Write(bytes = Encoding.ASCII.GetBytes(ms.Length.ToString("D8")), 0, bytes.Length);
                 ms.Seek(pos, SeekOrigin.Begin);
 
                 // Terminator
@@ -314,7 +333,9 @@ internal static class Helpers
 
                 var str = GetString(ms.Pointer, (int)ms.Length, Encoding.UTF8);
                 if (NativeMethods.SetClipboardData(CF_HTML, ms.Pointer) != IntPtr.Zero)
+                {
                     ms.FreeOnDispose = false; // Clipboard will free memory
+                }
             }
         }
         catch (Exception ex)
@@ -343,10 +364,12 @@ internal static class Helpers
         Debug.Assert(scintilla.DirectMessage(SCI_GETCODEPAGE).ToInt32() == SC_CP_UTF8);
 
         if (startBytePos == endBytePos)
+        {
             return string.Empty;
+        }
 
         StyleData[] styles = null;
-        List<ArraySegment<byte>> styledSegments = GetStyledSegments(scintilla, false, false, startBytePos, endBytePos, out styles);
+        var styledSegments = GetStyledSegments(scintilla, false, false, startBytePos, endBytePos, out styles);
 
         using (var ms = new NativeMemoryStream(styledSegments.Sum(s => s.Count))) // Hint
         using (var sw = new StreamWriter(ms, new UTF8Encoding(false)))
@@ -360,19 +383,27 @@ internal static class Helpers
             sw.Write(" background-color: #{0:X2}{1:X2}{2:X2};", (styles[Style.Default].BackColor >> 0) & 0xFF, (styles[Style.Default].BackColor >> 8) & 0xFF, (styles[Style.Default].BackColor >> 16) & 0xFF);
             sw.WriteLine(" }");
 
-            for (int i = 0; i < styles.Length; i++)
+            for (var i = 0; i < styles.Length; i++)
             {
                 if (!styles[i].Used)
+                {
                     continue;
+                }
 
                 sw.Write("span.s{0} {{", i);
                 sw.Write(@" font-family: ""{0}"";", styles[i].FontName);
                 sw.Write(" font-size: {0}pt;", styles[i].SizeF);
                 sw.Write(" font-weight: {0};", styles[i].Weight);
                 if (styles[i].Italic != 0)
+                {
                     sw.Write(" font-style: italic;");
+                }
+
                 if (styles[i].Underline != 0)
+                {
                     sw.Write(" text-decoration: underline;");
+                }
+
                 sw.Write(" background-color: #{0:X2}{1:X2}{2:X2};", (styles[i].BackColor >> 0) & 0xFF, (styles[i].BackColor >> 8) & 0xFF, (styles[i].BackColor >> 16) & 0xFF);
                 sw.Write(" color: #{0:X2}{1:X2}{2:X2};", (styles[i].ForeColor >> 0) & 0xFF, (styles[i].ForeColor >> 8) & 0xFF, (styles[i].ForeColor >> 16) & 0xFF);
                 switch ((StyleCase)styles[i].Case)
@@ -386,14 +417,16 @@ internal static class Helpers
                 }
 
                 if (styles[i].Visible == 0)
+                {
                     sw.Write(" visibility: hidden;");
+                }
 
                 sw.WriteLine(" }");
             }
 
             sw.WriteLine("</style>");
 
-            var unicodeLineEndings = ((scintilla.DirectMessage(SCI_GETLINEENDTYPESACTIVE).ToInt32() & SC_LINE_END_TYPE_UNICODE) > 0);
+            var unicodeLineEndings = (scintilla.DirectMessage(SCI_GETLINEENDTYPESACTIVE).ToInt32() & SC_LINE_END_TYPE_UNICODE) > 0;
             var tabSize = scintilla.DirectMessage(SCI_GETTABWIDTH).ToInt32();
             var tab = new string(' ', tabSize);
             var lastStyle = Style.Default;
@@ -406,7 +439,7 @@ internal static class Helpers
             foreach (var seg in styledSegments)
             {
                 var endOffset = seg.Offset + seg.Count;
-                for (int i = seg.Offset; i < endOffset; i += 2)
+                for (var i = seg.Offset; i < endOffset; i += 2)
                 {
                     var ch = seg.Array[i];
                     var style = seg.Array[i + 1];
@@ -439,7 +472,9 @@ internal static class Helpers
                             if (i + 2 < endOffset)
                             {
                                 if (seg.Array[i + 2] == (byte)'\n')
+                                {
                                     i += 2;
+                                }
                             }
 
                             // Either way, this is a line break
@@ -518,7 +553,7 @@ internal static class Helpers
             // Rectangular selections are ordered top to bottom and have line breaks appended.
             var ranges = new List<Tuple<int, int>>();
             var selCount = scintilla.DirectMessage(SCI_GETSELECTIONS).ToInt32();
-            for (int i = 0; i < selCount; i++)
+            for (var i = 0; i < selCount; i++)
             {
                 var selStartBytePos = scintilla.DirectMessage(SCI_GETSELECTIONNSTART, new IntPtr(i)).ToInt32();
                 var selEndBytePos = scintilla.DirectMessage(SCI_GETSELECTIONNEND, new IntPtr(i)).ToInt32();
@@ -528,7 +563,9 @@ internal static class Helpers
 
             var selIsRect = scintilla.DirectMessage(SCI_SELECTIONISRECTANGLE) != IntPtr.Zero;
             if (selIsRect)
+            {
                 ranges.OrderBy(r => r.Item1); // Sort top to bottom
+            }
 
             foreach (var range in ranges)
             {
@@ -545,7 +582,7 @@ internal static class Helpers
             var lineStartBytePos = scintilla.DirectMessage(SCI_POSITIONFROMLINE, new IntPtr(lineIndex)).ToInt32();
             var lineLength = scintilla.DirectMessage(SCI_POSITIONFROMLINE, new IntPtr(lineIndex)).ToInt32();
 
-            var styledText = GetStyledText(scintilla, lineStartBytePos, (lineStartBytePos + lineLength), false);
+            var styledText = GetStyledText(scintilla, lineStartBytePos, lineStartBytePos + lineLength, false);
             segments.Add(styledText);
         }
         else // User-specified range
@@ -571,7 +608,7 @@ internal static class Helpers
 
         foreach (var seg in segments)
         {
-            for (int i = 0; i < seg.Count; i += 2)
+            for (var i = 0; i < seg.Count; i += 2)
             {
                 var style = seg.Array[i + 1];
                 if (!styles[style].Used)
@@ -600,11 +637,11 @@ internal static class Helpers
         // Make sure the range is styled
         scintilla.DirectMessage(SCI_COLOURISE, new IntPtr(startBytePos), new IntPtr(endBytePos));
 
-        var byteLength = (endBytePos - startBytePos);
-        var buffer = new byte[(byteLength * 2) + (addLineBreak ? 4 : 0) + 2];
+        var byteLength = endBytePos - startBytePos;
+        var buffer = new byte[byteLength * 2 + (addLineBreak ? 4 : 0) + 2];
         fixed (byte* bp = buffer)
         {
-            Sci_TextRange* tr = stackalloc Sci_TextRange[1];
+            var tr = stackalloc Sci_TextRange[1];
             tr->chrg.cpMin = startBytePos;
             tr->chrg.cpMax = endBytePos;
             tr->lpstrText = new IntPtr(bp);

@@ -14,7 +14,7 @@ public abstract class StyleBase<TMarkers, TStyles, TIndicators, TLines, TMargins
     where TLines : LineCollectionBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>, IEnumerable
     where TMargins : MarginCollectionBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>, IEnumerable
     where TSelections : SelectionCollectionBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>, IEnumerable
-    where TEventArgs : System.EventArgs
+    where TEventArgs : EventArgs
     where TMarker: MarkerBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>
     where TStyle : StyleBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>
     where TIndicator : IndicatorBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>
@@ -126,7 +126,7 @@ public abstract class StyleBase<TMarkers, TStyles, TIndicators, TLines, TMargins
         }
         set
         {
-            var bold = (value ? new IntPtr(1) : IntPtr.Zero);
+            var bold = value ? new IntPtr(1) : IntPtr.Zero;
             scintilla.DirectMessage(ScintillaConstants.SCI_STYLESETBOLD, new IntPtr(Index), bold);
         }
     }
@@ -164,7 +164,7 @@ public abstract class StyleBase<TMarkers, TStyles, TIndicators, TLines, TMargins
         }
         set
         {
-            var fillLine = (value ? new IntPtr(1) : IntPtr.Zero);
+            var fillLine = value ? new IntPtr(1) : IntPtr.Zero;
             scintilla.DirectMessage(ScintillaConstants.SCI_STYLESETEOLFILLED, new IntPtr(Index), fillLine);
         }
     }
@@ -183,7 +183,9 @@ public abstract class StyleBase<TMarkers, TStyles, TIndicators, TLines, TMargins
             unsafe
             {
                 fixed (byte* bp = font)
+                {
                     scintilla.DirectMessage(ScintillaConstants.SCI_STYLEGETFONT, new IntPtr(Index), new IntPtr(bp));
+                }
             }
 
             var name = Encoding.UTF8.GetString(font, 0, length);
@@ -199,7 +201,9 @@ public abstract class StyleBase<TMarkers, TStyles, TIndicators, TLines, TMargins
             unsafe
             {
                 fixed (byte* bp = font)
+                {
                     scintilla.DirectMessage(ScintillaConstants.SCI_STYLESETFONT, new IntPtr(Index), new IntPtr(bp));
+                }
             }
         }
     }
@@ -223,7 +227,7 @@ public abstract class StyleBase<TMarkers, TStyles, TIndicators, TLines, TMargins
         }
         set
         {
-            var hotspot = (value ? new IntPtr(1) : IntPtr.Zero);
+            var hotspot = value ? new IntPtr(1) : IntPtr.Zero;
             scintilla.DirectMessage(ScintillaConstants.SCI_STYLESETHOTSPOT, new IntPtr(Index), hotspot);
         }
     }
@@ -246,7 +250,7 @@ public abstract class StyleBase<TMarkers, TStyles, TIndicators, TLines, TMargins
         }
         set
         {
-            var italic = (value ? new IntPtr(1) : IntPtr.Zero);
+            var italic = value ? new IntPtr(1) : IntPtr.Zero;
             scintilla.DirectMessage(ScintillaConstants.SCI_STYLESETITALIC, new IntPtr(Index), italic);
         }
     }
@@ -297,7 +301,7 @@ public abstract class StyleBase<TMarkers, TStyles, TIndicators, TLines, TMargins
         }
         set
         {
-            var underline = (value ? new IntPtr(1) : IntPtr.Zero);
+            var underline = value ? new IntPtr(1) : IntPtr.Zero;
             scintilla.DirectMessage(ScintillaConstants.SCI_STYLESETUNDERLINE, new IntPtr(Index), underline);
         }
     }
@@ -314,7 +318,7 @@ public abstract class StyleBase<TMarkers, TStyles, TIndicators, TLines, TMargins
         }
         set
         {
-            var visible = (value ? new IntPtr(1) : IntPtr.Zero);
+            var visible = value ? new IntPtr(1) : IntPtr.Zero;
             scintilla.DirectMessage(ScintillaConstants.SCI_STYLESETVISIBLE, new IntPtr(Index), visible);
         }
     }

@@ -63,13 +63,15 @@ internal sealed unsafe class NativeMemoryStream : Stream
 
     public override void Write(byte[] buffer, int offset, int count)
     {
-        if ((position + count) > capacity)
+        if (position + count > capacity)
         {
             // Realloc buffer
-            var minCapacity = (position + count);
-            var newCapacity = (capacity * 2);
+            var minCapacity = position + count;
+            var newCapacity = capacity * 2;
             if (newCapacity < minCapacity)
+            {
                 newCapacity = minCapacity;
+            }
 
             var newPtr = Marshal.AllocHGlobal(newCapacity);
             NativeMethods.MoveMemory(newPtr, ptr, length);
@@ -88,55 +90,22 @@ internal sealed unsafe class NativeMemoryStream : Stream
 
     #region Properties
 
-    public override bool CanRead
-    {
-        get { throw new NotImplementedException(); }
-    }
+    public override bool CanRead => throw new NotImplementedException();
 
-    public override bool CanSeek
-    {
-        get
-        {
-            return true;
-        }
-    }
+    public override bool CanSeek => true;
 
-    public override bool CanWrite
-    {
-        get
-        {
-            return true;
-        }
-    }
+    public override bool CanWrite => true;
 
     public bool FreeOnDispose { get; set; }
 
-    public override long Length
-    {
-        get
-        {
-            return length;
-        }
-    }
+    public override long Length => length;
 
-    public IntPtr Pointer
-    {
-        get
-        {
-            return ptr;
-        }
-    }
+    public IntPtr Pointer => ptr;
 
     public override long Position
     {
-        get
-        {
-            return position;
-        }
-        set
-        {
-            throw new NotImplementedException();
-        }
+        get => position;
+        set => throw new NotImplementedException();
     }
 
     #endregion Properties
@@ -146,10 +115,12 @@ internal sealed unsafe class NativeMemoryStream : Stream
     public NativeMemoryStream(int capacity)
     {
         if (capacity < 4)
+        {
             capacity = 4;
+        }
 
         this.capacity = capacity;
-        this.ptr = Marshal.AllocHGlobal(capacity);
+        ptr = Marshal.AllocHGlobal(capacity);
         FreeOnDispose = true;
     }
 

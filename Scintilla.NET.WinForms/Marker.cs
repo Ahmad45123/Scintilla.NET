@@ -21,14 +21,18 @@ public class Marker : MarkerBase<MarkerCollection, StyleCollection, IndicatorCol
     public override unsafe void DefineRgbaImage(Bitmap image)
     {
         if (image == null)
+        {
             return;
+        }
 
         scintilla.DirectMessage(SCI_RGBAIMAGESETWIDTH, new IntPtr(image.Width));
         scintilla.DirectMessage(SCI_RGBAIMAGESETHEIGHT, new IntPtr(image.Height));
 
         var bytes = Helpers.BitmapToArgb(image);
         fixed (byte* bp = bytes)
+        {
             scintilla.DirectMessage(SCI_MARKERDEFINERGBAIMAGE, new IntPtr(Index), new IntPtr(bp));
+        }
     }
 
     /// <summary>

@@ -22,7 +22,7 @@ public class BeforeModificationEventArgs : BeforeModificationEventArgsBase<Marke
     public BeforeModificationEventArgs(
         IScintillaApi<MarkerCollection, StyleCollection, IndicatorCollection, LineCollection, MarginCollection,
             SelectionCollection, SCNotificationEventArgs, Marker, Style, Indicator, Line, Margin, Selection, Bitmap,
-            Color> scintilla, ModificationSource source, int bytePosition, int byteLength, IntPtr text) : base(
+            Color> scintilla, ModificationSource source, int bytePosition, int byteLength, nint text) : base(
         scintilla, source, bytePosition, byteLength, text)
     {
     }

@@ -14,7 +14,7 @@ public class SelectionCollection : SelectionCollectionBase<MarkerCollection, Sty
 {
     IEnumerator IEnumerable.GetEnumerator()
     {
-        return this.GetEnumerator();
+        return GetEnumerator();
     }
 
     /// <summary>

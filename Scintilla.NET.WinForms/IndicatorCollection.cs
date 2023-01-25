@@ -15,7 +15,7 @@ public class IndicatorCollection: IndicatorCollectionBase<MarkerCollection, Styl
 {
     IEnumerator IEnumerable.GetEnumerator()
     {
-        return this.GetEnumerator();
+        return GetEnumerator();
     }
 
     /// <summary>

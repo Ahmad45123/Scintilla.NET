@@ -18,7 +18,7 @@ public abstract class LineCollectionBase<TMarkers, TStyles, TIndicators, TLines,
     where TLines : LineCollectionBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>, IEnumerable
     where TMargins : MarginCollectionBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>, IEnumerable
     where TSelections : SelectionCollectionBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>, IEnumerable
-    where TEventArgs : System.EventArgs
+    where TEventArgs : EventArgs
     where TMarker: MarkerBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>
     where TStyle : StyleBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>
     where TIndicator : IndicatorBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>
@@ -89,9 +89,9 @@ public abstract class LineCollectionBase<TMarkers, TStyles, TIndicators, TLines,
         if (index + 1 <= stepLine)
             return perLineData[index + 1].Start - perLineData[index].Start;
         else if (index <= stepLine)
-            return (perLineData[index + 1].Start + stepLength) - perLineData[index].Start;
+            return perLineData[index + 1].Start + stepLength - perLineData[index].Start;
         else
-            return (perLineData[index + 1].Start + stepLength) - (perLineData[index].Start + stepLength);
+            return perLineData[index + 1].Start + stepLength - (perLineData[index].Start + stepLength);
     }
 
     /// <summary>
@@ -121,7 +121,7 @@ public abstract class LineCollectionBase<TMarkers, TStyles, TIndicators, TLines,
 
         // Optimization when the line contains NO multibyte characters
         if (!LineContainsMultibyteChar(line))
-            return (bytePos + pos);
+            return bytePos + pos;
 
         while (pos > 0)
         {
@@ -173,7 +173,7 @@ public abstract class LineCollectionBase<TMarkers, TStyles, TIndicators, TLines,
     {
         var totalChars = 0;
 
-        for (int i = 0; i < perLineData.Count; i++)
+        for (var i = 0; i < perLineData.Count; i++)
         {
             var error = totalChars == CharPositionFromLine(i) ? null : "*";
             if (i == perLineData.Count - 1)
@@ -186,7 +186,9 @@ public abstract class LineCollectionBase<TMarkers, TStyles, TIndicators, TLines,
                 var bytes = new byte[len];
 
                 fixed (byte* ptr = bytes)
+                {
                     scintilla.DirectMessage(SCI_GETLINE, new IntPtr(i), new IntPtr(ptr));
+                }
 
                 var str = scintilla.Encoding.GetString(bytes);
                 var containsMultibyte = "U";
@@ -219,8 +221,8 @@ public abstract class LineCollectionBase<TMarkers, TStyles, TIndicators, TLines,
     /// <returns>An object that contains all <see cref="LineBase{TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor}" /> objects within the <see cref="LineCollectionBase{TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor}" />.</returns>
     public IEnumerator<TLine> GetEnumerator()
     {
-        int count = Count;
-        for (int i = 0; i < count; i++)
+        var count = Count;
+        for (var i = 0; i < count; i++)
             yield return this[i];
     }
 
@@ -235,14 +237,14 @@ public abstract class LineCollectionBase<TMarkers, TStyles, TIndicators, TLines,
         if (perLine.ContainsMultibyte == ContainsMultibyte.Unkown)
         {
             perLine.ContainsMultibyte =
-                (scintilla.DirectMessage(SCI_LINELENGTH, new IntPtr(index)).ToInt32() == CharLineLength(index))
+                scintilla.DirectMessage(SCI_LINELENGTH, new IntPtr(index)).ToInt32() == CharLineLength(index)
                     ? ContainsMultibyte.No
                     : ContainsMultibyte.Yes;
 
             perLineData[index] = perLine;
         }
 
-        return (perLine.ContainsMultibyte == ContainsMultibyte.Yes);
+        return perLine.ContainsMultibyte == ContainsMultibyte.Yes;
     }
 
     /// <summary>
@@ -261,7 +263,7 @@ public abstract class LineCollectionBase<TMarkers, TStyles, TIndicators, TLines,
 
         while (low <= high)
         {
-            var mid = low + ((high - low) / 2);
+            var mid = low + (high - low) / 2;
             var start = CharPositionFromLine(mid);
 
             if (pos == start)
@@ -383,7 +385,7 @@ public abstract class LineCollectionBase<TMarkers, TStyles, TIndicators, TLines,
             AdjustLineLength(startLine, GetCharCount(lineByteStart, lineByteLength) - CharLineLength(startLine));
 
             var linesRemoved = scn.linesAdded.ToInt32() * -1;
-            for (int i = 0; i < linesRemoved; i++)
+            for (var i = 0; i < linesRemoved; i++)
             {
                 // Deleted line
                 DeletePerLine(startLine + 1);
@@ -407,7 +409,7 @@ public abstract class LineCollectionBase<TMarkers, TStyles, TIndicators, TLines,
             var lineByteLength = scintilla.DirectMessage(SCI_LINELENGTH, new IntPtr(startLine)).ToInt32();
             AdjustLineLength(startLine, GetCharCount(lineByteStart, lineByteLength) - CharLineLength(startLine));
 
-            for (int i = 1; i <= scn.linesAdded.ToInt32(); i++)
+            for (var i = 1; i <= scn.linesAdded.ToInt32(); i++)
             {
                 var line = startLine + i;
 
@@ -431,7 +433,7 @@ public abstract class LineCollectionBase<TMarkers, TStyles, TIndicators, TLines,
     {
         get
         {
-            return (scintilla.DirectMessage(SCI_GETALLLINESVISIBLE) != IntPtr.Zero);
+            return scintilla.DirectMessage(SCI_GETALLLINESVISIBLE) != IntPtr.Zero;
         }
     }
 
@@ -444,7 +446,7 @@ public abstract class LineCollectionBase<TMarkers, TStyles, TIndicators, TLines,
         get
         {
             // Subtract the terminal line
-            return (perLineData.Count - 1);
+            return perLineData.Count - 1;
         }
     }
 
@@ -480,9 +482,9 @@ public abstract class LineCollectionBase<TMarkers, TStyles, TIndicators, TLines,
         this.scintilla = scintilla;
         this.scintilla.SCNotification += scintilla_SCNotification;
 
-        this.perLineData = new GapBuffer<PerLine>();
-        this.perLineData.Add(new PerLine { Start = 0 });
-        this.perLineData.Add(new PerLine { Start = 0 }); // Terminal
+        perLineData = new GapBuffer<PerLine>();
+        perLineData.Add(new PerLine { Start = 0 });
+        perLineData.Add(new PerLine { Start = 0 }); // Terminal
     }
 
     #endregion Constructors

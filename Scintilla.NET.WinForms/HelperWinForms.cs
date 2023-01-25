@@ -21,9 +21,13 @@ internal class HelperWinForms
             if (useSelection)
             {
                 if (allowLine)
+                {
                     scintilla.DirectMessage(SCI_COPYALLOWLINE);
+                }
                 else
+                {
                     scintilla.DirectMessage(SCI_COPY);
+                }
             }
             else
             {
@@ -80,7 +84,7 @@ internal class HelperWinForms
             }
 
             // If we have segments and can open the clipboard
-            if (styledSegments != null && styledSegments.Count > 0 && NativeMethods.OpenClipboard(scintilla.Handle))
+            if (styledSegments is { Count: > 0 } && NativeMethods.OpenClipboard(scintilla.Handle))
             {
                 if ((format & CopyFormat.Text) == 0)
                 {
@@ -97,11 +101,15 @@ internal class HelperWinForms
 
                 // RTF
                 if ((format & CopyFormat.Rtf) > 0)
+                {
                     CopyRtf(scintilla, styles, styledSegments);
+                }
 
                 // HTML
                 if ((format & CopyFormat.Html) > 0)
+                {
                     CopyHtml(scintilla, styles, styledSegments);
+                }
 
                 NativeMethods.CloseClipboard();
             }
@@ -123,17 +131,25 @@ internal class HelperWinForms
             int twips;
             var fontStyle = FontStyle.Regular;
             if (styles[Style.Default].Weight >= 700)
+            {
                 fontStyle |= FontStyle.Bold;
+            }
+
             if (styles[Style.Default].Italic != 0)
+            {
                 fontStyle |= FontStyle.Italic;
+            }
+
             if (styles[Style.Default].Underline != 0)
+            {
                 fontStyle |= FontStyle.Underline;
+            }
 
             using (var graphics = scintilla.CreateGraphics())
             using (var font = new Font(styles[Style.Default].FontName, styles[Style.Default].SizeF, fontStyle))
             {
                 var width = graphics.MeasureString(" ", font).Width;
-                twips = (int)((width / graphics.DpiX) * 1440);
+                twips = (int)(width / graphics.DpiX * 1440);
                 // TODO The twips value calculated seems too small on my computer
             }
 
@@ -151,13 +167,17 @@ internal class HelperWinForms
                 tw.Write(@"{\fonttbl");
                 tw.Write(@"{{\f0 {0};}}", styles[Style.Default].FontName);
                 var fontIndex = 1;
-                for (int i = 0; i < styles.Length; i++)
+                for (var i = 0; i < styles.Length; i++)
                 {
                     if (!styles[i].Used)
+                    {
                         continue;
+                    }
 
                     if (i == Style.Default)
+                    {
                         continue;
+                    }
 
                     // Not a completely unique list, but close enough
                     if (styles[i].FontName != styles[Style.Default].FontName)
@@ -176,13 +196,17 @@ internal class HelperWinForms
                 styles[Style.Default].ForeColorIndex = 0;
                 styles[Style.Default].BackColorIndex = 1;
                 var colorIndex = 2;
-                for (int i = 0; i < styles.Length; i++)
+                for (var i = 0; i < styles.Length; i++)
                 {
                     if (!styles[i].Used)
+                    {
                         continue;
+                    }
 
                     if (i == Style.Default)
+                    {
                         continue;
+                    }
 
                     // Not a completely unique list, but close enough
                     if (styles[i].ForeColor != styles[Style.Default].ForeColor)
@@ -211,19 +235,27 @@ internal class HelperWinForms
                 // Start with the default style
                 tw.Write(@"\f{0}\fs{1}\cf{2}\chshdng0\chcbpat{3}\cb{3} ", styles[Style.Default].FontIndex, (int)(styles[Style.Default].SizeF * 2), styles[Style.Default].ForeColorIndex, styles[Style.Default].BackColorIndex);
                 if (styles[Style.Default].Italic != 0)
+                {
                     tw.Write(@"\i");
+                }
+
                 if (styles[Style.Default].Underline != 0)
+                {
                     tw.Write(@"\ul");
+                }
+
                 if (styles[Style.Default].Weight >= 700)
+                {
                     tw.Write(@"\b");
+                }
 
                 tw.AutoFlush = true;
                 var lastStyle = Style.Default;
-                var unicodeLineEndings = ((scintilla.DirectMessage(SCI_GETLINEENDTYPESACTIVE).ToInt32() & SC_LINE_END_TYPE_UNICODE) > 0);
+                var unicodeLineEndings = (scintilla.DirectMessage(SCI_GETLINEENDTYPESACTIVE).ToInt32() & SC_LINE_END_TYPE_UNICODE) > 0;
                 foreach (var seg in styledSegments)
                 {
                     var endOffset = seg.Offset + seg.Count;
-                    for (int i = seg.Offset; i < endOffset; i += 2)
+                    for (var i = seg.Offset; i < endOffset; i += 2)
                     {
                         var ch = seg.Array[i];
                         var style = seg.Array[i + 1];
@@ -232,23 +264,45 @@ internal class HelperWinForms
                         {
                             // Change the style
                             if (styles[lastStyle].FontIndex != styles[style].FontIndex)
+                            {
                                 tw.Write(@"\f{0}", styles[style].FontIndex);
+                            }
+
                             if (styles[lastStyle].SizeF != styles[style].SizeF)
+                            {
                                 tw.Write(@"\fs{0}", (int)(styles[style].SizeF * 2));
+                            }
+
                             if (styles[lastStyle].ForeColorIndex != styles[style].ForeColorIndex)
+                            {
                                 tw.Write(@"\cf{0}", styles[style].ForeColorIndex);
+                            }
+
                             if (styles[lastStyle].BackColorIndex != styles[style].BackColorIndex)
+                            {
                                 tw.Write(@"\chshdng0\chcbpat{0}\cb{0}", styles[style].BackColorIndex);
+                            }
+
                             if (styles[lastStyle].Italic != styles[style].Italic)
+                            {
                                 tw.Write(@"\i{0}", styles[style].Italic != 0 ? "" : "0");
+                            }
+
                             if (styles[lastStyle].Underline != styles[style].Underline)
+                            {
                                 tw.Write(@"\ul{0}", styles[style].Underline != 0 ? "" : "0");
+                            }
+
                             if (styles[lastStyle].Weight != styles[style].Weight)
                             {
                                 if (styles[style].Weight >= 700 && styles[lastStyle].Weight < 700)
+                                {
                                     tw.Write(@"\b");
+                                }
                                 else if (styles[style].Weight < 700 && styles[lastStyle].Weight >= 700)
+                                {
                                     tw.Write(@"\b0");
+                                }
                             }
 
                             // NOTE: We don't support StyleData.Visible and StyleData.Case in RTF
@@ -279,7 +333,9 @@ internal class HelperWinForms
                                 if (i + 2 < endOffset)
                                 {
                                     if (seg.Array[i + 2] == (byte)'\n')
+                                    {
                                         i += 2;
+                                    }
                                 }
 
                                 // Either way, this is a line break
@@ -334,30 +390,30 @@ internal class HelperWinForms
                                 if (ch > 0x7F)
                                 {
                                     // Treat as UTF-8 code point
-                                    int unicode = 0;
+                                    var unicode = 0;
                                     if (ch < 0xE0 && i + 2 < endOffset)
                                     {
-                                        unicode |= ((0x1F & ch) << 6);
-                                        unicode |= (0x3F & seg.Array[i + 2]);
+                                        unicode |= (0x1F & ch) << 6;
+                                        unicode |= 0x3F & seg.Array[i + 2];
                                         tw.Write(@"\u{0}?", unicode);
                                         i += 2;
                                         break;
                                     }
                                     else if (ch < 0xF0 && i + 4 < endOffset)
                                     {
-                                        unicode |= ((0xF & ch) << 12);
-                                        unicode |= ((0x3F & seg.Array[i + 2]) << 6);
-                                        unicode |= (0x3F & seg.Array[i + 4]);
+                                        unicode |= (0xF & ch) << 12;
+                                        unicode |= (0x3F & seg.Array[i + 2]) << 6;
+                                        unicode |= 0x3F & seg.Array[i + 4];
                                         tw.Write(@"\u{0}?", unicode);
                                         i += 4;
                                         break;
                                     }
                                     else if (ch < 0xF8 && i + 6 < endOffset)
                                     {
-                                        unicode |= ((0x7 & ch) << 18);
-                                        unicode |= ((0x3F & seg.Array[i + 2]) << 12);
-                                        unicode |= ((0x3F & seg.Array[i + 4]) << 6);
-                                        unicode |= (0x3F & seg.Array[i + 6]);
+                                        unicode |= (0x7 & ch) << 18;
+                                        unicode |= (0x3F & seg.Array[i + 2]) << 12;
+                                        unicode |= (0x3F & seg.Array[i + 4]) << 6;
+                                        unicode |= 0x3F & seg.Array[i + 6];
                                         tw.Write(@"\u{0}?", unicode);
                                         i += 6;
                                         break;
@@ -380,7 +436,9 @@ internal class HelperWinForms
 
                 // var str = GetString(ms.Pointer, (int)ms.Length, Encoding.ASCII);
                 if (NativeMethods.SetClipboardData(CF_RTF, ms.Pointer) != IntPtr.Zero)
+                {
                     ms.FreeOnDispose = false; // Clipboard will free memory
+                }
             }
         }
         catch (Exception ex)

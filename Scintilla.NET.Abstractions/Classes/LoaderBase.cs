@@ -21,7 +21,7 @@ public abstract class LoaderBase : ILoader
             var bytes = HelpersGeneral.GetBytes(data, length, encoding, zeroTerminated: false);
             fixed (byte* bp = bytes)
             {
-                var status = (IntPtr.Size == 4 ? loader32.AddData(self, bp, bytes.Length) : loader64.AddData(self, bp, bytes.Length));
+                var status = IntPtr.Size == 4 ? loader32.AddData(self, bp, bytes.Length) : loader64.AddData(self, bp, bytes.Length);
                 if (status != SC_STATUS_OK)
                     return false;
             }
@@ -32,20 +32,20 @@ public abstract class LoaderBase : ILoader
 
     public virtual Document ConvertToDocument()
     {
-        var ptr = (IntPtr.Size == 4 ? loader32.ConvertToDocument(self) : loader64.ConvertToDocument(self));
+        var ptr = IntPtr.Size == 4 ? loader32.ConvertToDocument(self) : loader64.ConvertToDocument(self);
         var document = new Document { Value = ptr };
         return document;
     }
 
     public virtual int Release()
     {
-        var count = (IntPtr.Size == 4 ? loader32.Release(self) : loader64.Release(self));
+        var count = IntPtr.Size == 4 ? loader32.Release(self) : loader64.Release(self);
         return count;
     }
 
     protected unsafe LoaderBase(IntPtr ptr, Encoding encoding)
     {
-        this.self = ptr;
+        self = ptr;
         this.encoding = encoding;
 
         // http://stackoverflow.com/a/985820/2073621
@@ -60,7 +60,7 @@ public abstract class LoaderBase : ILoader
         // invoke each function without having to do any pointer arithmetic. Depending on the
         // architecture, the function calling conventions can be different.
 
-        IntPtr vfptr = *(IntPtr*)ptr;
+        var vfptr = *(IntPtr*)ptr;
         if (IntPtr.Size == 4)
         {
             loader32 = (ScintillaApiStructs.ILoaderVTable32)Marshal.PtrToStructure(vfptr,

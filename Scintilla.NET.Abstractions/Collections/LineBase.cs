@@ -15,7 +15,7 @@ public abstract class LineBase<TMarkers, TStyles, TIndicators, TLines, TMargins,
     where TLines : LineCollectionBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>, IEnumerable
     where TMargins : MarginCollectionBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>, IEnumerable
     where TSelections : SelectionCollectionBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>, IEnumerable
-    where TEventArgs : System.EventArgs
+    where TEventArgs : EventArgs
     where TMarker: MarkerBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>
     where TStyle : StyleBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>
     where TIndicator : IndicatorBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>
@@ -180,7 +180,9 @@ public abstract class LineBase<TMarkers, TStyles, TIndicators, TLines, TMargins,
         {
             var bytes = HelpersGeneral.GetBytes(text, scintilla.Encoding, zeroTerminated: true);
             fixed (byte* bp = bytes)
+            {
                 scintilla.DirectMessage(SCI_TOGGLEFOLDSHOWTEXT, new IntPtr(Index), new IntPtr(bp));
+            }
         }
     }
 
@@ -240,12 +242,14 @@ public abstract class LineBase<TMarkers, TStyles, TIndicators, TLines, TMargins,
             var styles = new byte[length + 1];
 
             fixed (byte* textPtr = text)
-            fixed (byte* stylePtr = styles)
             {
-                scintilla.DirectMessage(SCI_ANNOTATIONGETTEXT, new IntPtr(Index), new IntPtr(textPtr));
-                scintilla.DirectMessage(SCI_ANNOTATIONGETSTYLES, new IntPtr(Index), new IntPtr(stylePtr));
+                fixed (byte* stylePtr = styles)
+                {
+                    scintilla.DirectMessage(SCI_ANNOTATIONGETTEXT, new IntPtr(Index), new IntPtr(textPtr));
+                    scintilla.DirectMessage(SCI_ANNOTATIONGETSTYLES, new IntPtr(Index), new IntPtr(stylePtr));
 
-                return HelpersGeneral.ByteToCharStyles(stylePtr, textPtr, length, scintilla.Encoding);
+                    return HelpersGeneral.ByteToCharStyles(stylePtr, textPtr, length, scintilla.Encoding);
+                }
             }
         }
         set
@@ -261,7 +265,9 @@ public abstract class LineBase<TMarkers, TStyles, TIndicators, TLines, TMargins,
 
                 var styles = HelpersGeneral.CharToByteStyles(value ?? Array.Empty<byte>(), textPtr, length, scintilla.Encoding);
                 fixed (byte* stylePtr = styles)
+                {
                     scintilla.DirectMessage(SCI_ANNOTATIONSETSTYLES, new IntPtr(Index), new IntPtr(stylePtr));
+                }
             }
         }
     }
@@ -297,7 +303,9 @@ public abstract class LineBase<TMarkers, TStyles, TIndicators, TLines, TMargins,
             {
                 var bytes = HelpersGeneral.GetBytes(value, scintilla.Encoding, zeroTerminated: true);
                 fixed (byte* bp = bytes)
+                {
                     scintilla.DirectMessage(SCI_ANNOTATIONSETTEXT, new IntPtr(Index), new IntPtr(bp));
+                }
             }
         }
     }
@@ -335,11 +343,11 @@ public abstract class LineBase<TMarkers, TStyles, TIndicators, TLines, TMargins,
     {
         get
         {
-            return (scintilla.DirectMessage(SCI_GETFOLDEXPANDED, new IntPtr(Index)) != IntPtr.Zero);
+            return scintilla.DirectMessage(SCI_GETFOLDEXPANDED, new IntPtr(Index)) != IntPtr.Zero;
         }
         set
         {
-            var expanded = (value ? new IntPtr(1) : IntPtr.Zero);
+            var expanded = value ? new IntPtr(1) : IntPtr.Zero;
             scintilla.DirectMessage(SCI_SETFOLDEXPANDED, new IntPtr(Index), expanded);
         }
     }
@@ -353,7 +361,7 @@ public abstract class LineBase<TMarkers, TStyles, TIndicators, TLines, TMargins,
         get
         {
             var level = scintilla.DirectMessage(SCI_GETFOLDLEVEL, new IntPtr(Index)).ToInt32();
-            return (level & SC_FOLDLEVELNUMBERMASK);
+            return level & SC_FOLDLEVELNUMBERMASK;
         }
         set
         {
@@ -456,12 +464,14 @@ public abstract class LineBase<TMarkers, TStyles, TIndicators, TLines, TMargins,
             var styles = new byte[length + 1];
 
             fixed (byte* textPtr = text)
-            fixed (byte* stylePtr = styles)
             {
-                scintilla.DirectMessage(SCI_MARGINGETTEXT, new IntPtr(Index), new IntPtr(textPtr));
-                scintilla.DirectMessage(SCI_MARGINGETSTYLES, new IntPtr(Index), new IntPtr(stylePtr));
+                fixed (byte* stylePtr = styles)
+                {
+                    scintilla.DirectMessage(SCI_MARGINGETTEXT, new IntPtr(Index), new IntPtr(textPtr));
+                    scintilla.DirectMessage(SCI_MARGINGETSTYLES, new IntPtr(Index), new IntPtr(stylePtr));
 
-                return HelpersGeneral.ByteToCharStyles(stylePtr, textPtr, length, scintilla.Encoding);
+                    return HelpersGeneral.ByteToCharStyles(stylePtr, textPtr, length, scintilla.Encoding);
+                }
             }
         }
         set
@@ -477,7 +487,9 @@ public abstract class LineBase<TMarkers, TStyles, TIndicators, TLines, TMargins,
 
                 var styles = HelpersGeneral.CharToByteStyles(value ?? Array.Empty<byte>(), textPtr, length, scintilla.Encoding);
                 fixed (byte* stylePtr = styles)
+                {
                     scintilla.DirectMessage(SCI_MARGINSETSTYLES, new IntPtr(Index), new IntPtr(stylePtr));
+                }
             }
         }
     }
@@ -513,7 +525,9 @@ public abstract class LineBase<TMarkers, TStyles, TIndicators, TLines, TMargins,
             {
                 var bytes = HelpersGeneral.GetBytes(value, scintilla.Encoding, zeroTerminated: true);
                 fixed (byte* bp = bytes)
+                {
                     scintilla.DirectMessage(SCI_MARGINSETTEXT, new IntPtr(Index), new IntPtr(bp));
+                }
             }
         }
     }
@@ -550,7 +564,7 @@ public abstract class LineBase<TMarkers, TStyles, TIndicators, TLines, TMargins,
     /// <returns>The indentation measured in character columns, which corresponds to the width of space characters.</returns>
     public virtual int Indentation
     {
-        get => (scintilla.DirectMessage(SCI_GETLINEINDENTATION, new IntPtr(Index)).ToInt32());
+        get => scintilla.DirectMessage(SCI_GETLINEINDENTATION, new IntPtr(Index)).ToInt32();
         set => scintilla.DirectMessage(SCI_SETLINEINDENTATION, new IntPtr(Index), new IntPtr(value));
     }
 
@@ -560,7 +574,7 @@ public abstract class LineBase<TMarkers, TStyles, TIndicators, TLines, TMargins,
     /// <returns>true if the line is visible; otherwise, false.</returns>
     /// <seealso cref="Scintilla.ShowLines" />
     /// <seealso cref="Scintilla.HideLines" />
-    public virtual bool Visible => (scintilla.DirectMessage(SCI_GETLINEVISIBLE, new IntPtr(Index)) != IntPtr.Zero);
+    public virtual bool Visible => scintilla.DirectMessage(SCI_GETLINEVISIBLE, new IntPtr(Index)) != IntPtr.Zero;
 
     /// <summary>
     /// Gets the number of display lines this line would occupy when wrapping is enabled.

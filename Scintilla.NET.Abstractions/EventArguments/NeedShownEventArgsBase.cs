@@ -39,9 +39,9 @@ public abstract class NeedShownEventArgsBase<TMarkers, TStyles, TIndicators, TLi
         {
             if (length == null)
             {
-                var endBytePosition = (bytePosition + byteLength);
+                var endBytePosition = bytePosition + byteLength;
                 var endPosition = scintilla.Lines.ByteToCharPosition(endBytePosition);
-                length = (endPosition - Position);
+                length = endPosition - Position;
             }
 
             return (int)length;

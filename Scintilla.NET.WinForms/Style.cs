@@ -28,7 +28,9 @@ public class Style : StyleBase<MarkerCollection, StyleCollection, IndicatorColle
         set
         {
             if (value.IsEmpty)
+            {
                 value = Color.White;
+            }
 
             var color = ColorTranslator.ToWin32(value);
             scintilla.DirectMessage(ScintillaConstants.SCI_STYLESETBACK, new IntPtr(Index), new IntPtr(color));
@@ -50,7 +52,9 @@ public class Style : StyleBase<MarkerCollection, StyleCollection, IndicatorColle
         set
         {
             if (value.IsEmpty)
+            {
                 value = Color.Black;
+            }
 
             var color = ColorTranslator.ToWin32(value);
             scintilla.DirectMessage(ScintillaConstants.SCI_STYLESETFORE, new IntPtr(Index), new IntPtr(color));

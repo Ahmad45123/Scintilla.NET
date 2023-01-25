@@ -14,7 +14,7 @@ public abstract class IndicatorBase<TMarkers, TStyles, TIndicators, TLines, TMar
     where TLines : LineCollectionBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>, IEnumerable
     where TMargins : MarginCollectionBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>, IEnumerable
     where TSelections : SelectionCollectionBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>, IEnumerable
-    where TEventArgs : System.EventArgs
+    where TEventArgs : EventArgs
     where TMarker: MarkerBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>
     where TStyle : StyleBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>
     where TIndicator : IndicatorBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>
@@ -38,12 +38,12 @@ public abstract class IndicatorBase<TMarkers, TStyles, TIndicators, TLines, TMar
     /// An OR mask to use with <see cref="Scintilla.IndicatorValue" /> and <see cref="IndicatorFlags.ValueFore" /> to indicate
     /// that the user-defined indicator value should be treated as a RGB color.
     /// </summary>
-    public const int ValueBit = ScintillaConstants.SC_INDICVALUEBIT;
+    public const int ValueBit = SC_INDICVALUEBIT;
 
     /// <summary>
     /// An AND mask to use with <see cref="Indicator.ValueAt" /> to retrieve the user-defined value as a RGB color when being treated as such.
     /// </summary>
-    public const int ValueMask = ScintillaConstants.SC_INDICVALUEMASK;
+    public const int ValueMask = SC_INDICVALUEMASK;
 
     #endregion Constants
 
@@ -64,7 +64,7 @@ public abstract class IndicatorBase<TMarkers, TStyles, TIndicators, TLines, TMar
     {
         position = HelpersGeneral.Clamp(position, 0, scintilla.TextLength);
         position = scintilla.Lines.CharToBytePosition(position);
-        position = scintilla.DirectMessage(ScintillaConstants.SCI_INDICATOREND, new IntPtr(Index), new IntPtr(position)).ToInt32();
+        position = scintilla.DirectMessage(SCI_INDICATOREND, new IntPtr(Index), new IntPtr(position)).ToInt32();
         return scintilla.Lines.ByteToCharPosition(position);
     }
 
@@ -83,7 +83,7 @@ public abstract class IndicatorBase<TMarkers, TStyles, TIndicators, TLines, TMar
     {
         position = HelpersGeneral.Clamp(position, 0, scintilla.TextLength);
         position = scintilla.Lines.CharToBytePosition(position);
-        position = scintilla.DirectMessage(ScintillaConstants.SCI_INDICATORSTART, new IntPtr(Index), new IntPtr(position)).ToInt32();
+        position = scintilla.DirectMessage(SCI_INDICATORSTART, new IntPtr(Index), new IntPtr(position)).ToInt32();
         return scintilla.Lines.ByteToCharPosition(position);
     }
 
@@ -139,7 +139,7 @@ public abstract class IndicatorBase<TMarkers, TStyles, TIndicators, TLines, TMar
         }
         set
         {
-            int flags = (int)value;
+            var flags = (int)value;
             scintilla.DirectMessage(SCI_INDICSETFLAGS, new IntPtr(Index), new IntPtr(flags));
         }
     }
@@ -239,11 +239,11 @@ public abstract class IndicatorBase<TMarkers, TStyles, TIndicators, TLines, TMar
     {
         get
         {
-            return (scintilla.DirectMessage(SCI_INDICGETUNDER, new IntPtr(Index)) != IntPtr.Zero);
+            return scintilla.DirectMessage(SCI_INDICGETUNDER, new IntPtr(Index)) != IntPtr.Zero;
         }
         set
         {
-            var under = (value ? new IntPtr(1) : IntPtr.Zero);
+            var under = value ? new IntPtr(1) : IntPtr.Zero;
             scintilla.DirectMessage(SCI_INDICSETUNDER, new IntPtr(Index), under);
         }
     }

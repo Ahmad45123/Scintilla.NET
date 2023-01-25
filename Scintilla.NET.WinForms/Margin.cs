@@ -30,7 +30,9 @@ public class Margin : MarginBase<MarkerCollection, StyleCollection, IndicatorCol
         set
         {
             if (value.IsEmpty)
+            {
                 value = Color.Black;
+            }
 
             var color = ColorTranslator.ToWin32(value);
             scintilla.DirectMessage(SCI_SETMARGINBACKN, new IntPtr(Index), new IntPtr(color));

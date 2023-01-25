@@ -20,7 +20,7 @@ public class InsertCheckEventArgs : InsertCheckEventArgsBase<MarkerCollection, S
     public InsertCheckEventArgs(
         IScintillaApi<MarkerCollection, StyleCollection, IndicatorCollection, LineCollection, MarginCollection,
             SelectionCollection, SCNotificationEventArgs, Marker, Style, Indicator, Line, Margin, Selection, Bitmap,
-            Color> scintilla, int bytePosition, int byteLength, IntPtr text) : base(scintilla, bytePosition, byteLength,
+            Color> scintilla, int bytePosition, int byteLength, nint text) : base(scintilla, bytePosition, byteLength,
         text)
     {
     }

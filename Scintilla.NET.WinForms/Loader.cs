@@ -7,7 +7,7 @@ namespace Scintilla.NET.WinForms;
 internal sealed class Loader : LoaderBase
 {
     /// <inheritdoc />
-    public Loader(IntPtr ptr, Encoding encoding) : base(ptr, encoding)
+    public Loader(nint ptr, Encoding encoding) : base(ptr, encoding)
     {
     }
 }

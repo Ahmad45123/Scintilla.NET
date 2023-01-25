@@ -13,15 +13,15 @@ public static class NativeMethods
 
     #region Callbacks
 
-    public delegate IntPtr Scintilla_DirectFunction(IntPtr ptr, int iMessage, IntPtr wParam, IntPtr lParam);
+    public delegate nint Scintilla_DirectFunction(nint ptr, int iMessage, nint wParam, nint lParam);
 
-    public delegate IntPtr CreateLexer(string lexerName);
+    public delegate nint CreateLexer(string lexerName);
 
-    public delegate void GetLexerName(UIntPtr index, IntPtr name, IntPtr bufferLength);
+    public delegate void GetLexerName(nuint index, nint name, nint bufferLength);
 
-    public delegate IntPtr GetLexerCount();
+    public delegate nint GetLexerCount();
 
-    public delegate string LexerNameFromID(IntPtr identifier);
+    public delegate string LexerNameFromID(nint identifier);
 
     #endregion Callbacks
 
@@ -32,36 +32,36 @@ public static class NativeMethods
     public static extern bool CloseClipboard();
 
     [DllImport(DLL_NAME_KERNEL32, CharSet = CharSet.Ansi, ExactSpelling = true, SetLastError = true)]
-    public static extern IntPtr GetProcAddress(HandleRef hModule, string lpProcName);
+    public static extern nint GetProcAddress(HandleRef hModule, string lpProcName);
 
     [DllImport(DLL_NAME_USER32, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool EmptyClipboard();
 
     [DllImport(DLL_NAME_KERNEL32, EntryPoint = "LoadLibraryW", CharSet = CharSet.Unicode, SetLastError = true)]
-    public static extern IntPtr LoadLibrary(string lpFileName);
+    public static extern nint LoadLibrary(string lpFileName);
 
     [DllImport(DLL_NAME_KERNEL32, EntryPoint = "RtlMoveMemory", SetLastError = true)]
-    public static extern void MoveMemory(IntPtr dest, IntPtr src, int length);
+    public static extern void MoveMemory(nint dest, nint src, int length);
 
     [DllImport(DLL_NAME_USER32, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool OpenClipboard(IntPtr hWndNewOwner);
+    public static extern bool OpenClipboard(nint hWndNewOwner);
 
     [DllImport(DLL_NAME_USER32, SetLastError = true)]
     public static extern uint RegisterClipboardFormat(string lpszFormat);
 
     [DllImport(DLL_NAME_OLE32, ExactSpelling = true)]
-    public static extern int RevokeDragDrop(IntPtr hwnd);
+    public static extern int RevokeDragDrop(nint hwnd);
 
     [DllImport(DLL_NAME_USER32, EntryPoint = "SendMessageW", CharSet = CharSet.Unicode, SetLastError = true)]
-    public static extern IntPtr SendMessage(HandleRef hWnd, int msg, IntPtr wParam, IntPtr lParam);
+    public static extern nint SendMessage(HandleRef hWnd, int msg, nint wParam, nint lParam);
 
     [DllImport(DLL_NAME_USER32, SetLastError = true)]
-    public static extern IntPtr SetClipboardData(uint uFormat, IntPtr hMem);
+    public static extern nint SetClipboardData(uint uFormat, nint hMem);
 
     [DllImport(DLL_NAME_USER32, SetLastError = true)]
-    public static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
+    public static extern nint SetParent(nint hWndChild, nint hWndNewParent);
 
     #endregion Functions
 }

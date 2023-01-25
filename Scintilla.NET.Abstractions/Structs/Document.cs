@@ -26,7 +26,7 @@ public struct Document
     /// <returns>true if <paramref name="obj" /> is an instance of <see cref="Document" /> and equals the value of this instance; otherwise, false.</returns>
     public override bool Equals(object obj)
     {
-        return (obj is IntPtr) && Value == ((Document)obj).Value;
+        return obj is IntPtr && Value == ((Document)obj).Value;
     }
 
     /// <summary>

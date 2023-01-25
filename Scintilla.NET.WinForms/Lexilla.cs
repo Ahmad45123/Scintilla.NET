@@ -119,7 +119,7 @@ public class Lexilla
         var pointer = Marshal.AllocHGlobal(1024);
         try
         {
-            getLexerName((UIntPtr) index, pointer, new IntPtr(1024));
+            getLexerName((nuint) index, pointer, new IntPtr(1024));
             return Marshal.PtrToStringAnsi(pointer);
         }
         finally
@@ -145,7 +145,7 @@ public class Lexilla
     public static IEnumerable<string> GetLexerNames()
     {
         var count = GetLexerCount();
-        for (int i = 0; i < count; i++)
+        for (var i = 0; i < count; i++)
         {
             yield return GetLexerName(i);
         }

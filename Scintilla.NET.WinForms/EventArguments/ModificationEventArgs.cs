@@ -27,7 +27,7 @@ public class ModificationEventArgs : BeforeModificationEventArgsBase<MarkerColle
     /// <param name="byteLength">The length in bytes of the inserted or deleted text.</param>
     /// <param name="text">>A pointer to the text inserted or deleted.</param>
     /// <param name="linesAdded">The number of lines added or removed (delta).</param>
-    public ModificationEventArgs(IScintillaApi<MarkerCollection, StyleCollection, IndicatorCollection, LineCollection, MarginCollection, SelectionCollection, SCNotificationEventArgs, Marker, Style, Indicator, Line, Margin, Selection, Bitmap, Color> scintilla, ModificationSource source, int bytePosition, int byteLength, IntPtr text, int linesAdded) : base(scintilla, source, bytePosition, byteLength, text)
+    public ModificationEventArgs(IScintillaApi<MarkerCollection, StyleCollection, IndicatorCollection, LineCollection, MarginCollection, SelectionCollection, SCNotificationEventArgs, Marker, Style, Indicator, Line, Margin, Selection, Bitmap, Color> scintilla, ModificationSource source, int bytePosition, int byteLength, nint text, int linesAdded) : base(scintilla, source, bytePosition, byteLength, text)
     {
         LinesAdded = linesAdded;
     }

@@ -23,7 +23,7 @@ public struct MarkerHandle
     /// <returns>true if <paramref name="obj" /> is an instance of <see cref="MarkerHandle" /> and equals the value of this instance; otherwise, false.</returns>
     public override bool Equals(object obj)
     {
-        return (obj is IntPtr) && Value == ((MarkerHandle)obj).Value;
+        return obj is IntPtr && Value == ((MarkerHandle)obj).Value;
     }
 
     /// <summary>

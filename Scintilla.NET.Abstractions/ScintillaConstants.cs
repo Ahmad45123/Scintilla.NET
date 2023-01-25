@@ -79,8 +79,8 @@ public class ScintillaConstants
     public const int SCI_CTRL = SCMOD_CTRL;
     public const int SCI_ALT = SCMOD_ALT;
     public const int SCI_META = SCMOD_META;
-    public const int SCI_CSHIFT = (SCI_CTRL | SCI_SHIFT);
-    public const int SCI_ASHIFT = (SCI_ALT | SCI_SHIFT);
+    public const int SCI_CSHIFT = SCI_CTRL | SCI_SHIFT;
+    public const int SCI_ASHIFT = SCI_ALT | SCI_SHIFT;
 
     // Caret styles
     public const int CARETSTYLE_INVISIBLE = 0;
@@ -94,7 +94,7 @@ public class ScintillaConstants
     public const int EDGE_MULTILINE = 3;
 
     // Message-only window
-    public const int HWND_MESSAGE = (-3);
+    public const int HWND_MESSAGE = -3;
 
     // Indicators
     public const int INDIC_PLAIN = 0;
@@ -1166,7 +1166,7 @@ public class ScintillaConstants
     #region Lexer Constants
 
 #if NET40 || NET45 || NET461
-        private static readonly Dictionary<int, string> nameConstantMap = new Dictionary<int, string>();
+        private static readonly Dictionary<int, string> nameConstantMap = new();
         public static Dictionary<int, string> NameConstantMap
         {
             get
@@ -1313,7 +1313,7 @@ public class ScintillaConstants
 
 #else
     // Map the constant language names
-    public static readonly Dictionary<int, string> NameConstantMap = new Dictionary<int, string>(
+    public static readonly Dictionary<int, string> NameConstantMap = new(
         new[]
         {
             new KeyValuePair<int, string>(SCLEX_CONTAINER, ""),

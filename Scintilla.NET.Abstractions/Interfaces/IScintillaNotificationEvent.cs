@@ -31,7 +31,7 @@ namespace Scintilla.NET.Abstractions.Interfaces;
 /// </summary>
 /// <typeparam name="TEventArgs">The type of the event arguments.</typeparam>
 public interface IScintillaNotificationEvent<TEventArgs>
-    where TEventArgs : System.EventArgs
+    where TEventArgs : EventArgs
 {
     /// <summary>
     /// The Scintilla native notification.

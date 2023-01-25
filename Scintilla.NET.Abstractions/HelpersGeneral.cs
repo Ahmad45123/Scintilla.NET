@@ -44,7 +44,7 @@ public static class HelpersGeneral
 
     public static long CopyTo(this Stream source, Stream destination)
     {
-        byte[] buffer = new byte[2048];
+        var buffer = new byte[2048];
         int bytesRead;
         long totalBytes = 0;
         while ((bytesRead = source.Read(buffer, 0, buffer.Length)) > 0)
@@ -101,15 +101,17 @@ public static class HelpersGeneral
     public static unsafe byte[] GetBytes(string text, Encoding encoding, bool zeroTerminated)
     {
         if (string.IsNullOrEmpty(text))
-            return (zeroTerminated ? new byte[] { 0 } : new byte[0]);
+            return zeroTerminated ? new byte[] { 0 } : new byte[0];
 
-        int count = encoding.GetByteCount(text);
-        byte[] buffer = new byte[count + (zeroTerminated ? 1 : 0)];
+        var count = encoding.GetByteCount(text);
+        var buffer = new byte[count + (zeroTerminated ? 1 : 0)];
 
         fixed (byte* bp = buffer)
-        fixed (char* ch = text)
         {
-            encoding.GetBytes(ch, text.Length, bp, count);
+            fixed (char* ch = text)
+            {
+                encoding.GetBytes(ch, text.Length, bp, count);
+            }
         }
 
         if (zeroTerminated)
@@ -125,7 +127,9 @@ public static class HelpersGeneral
             var count = encoding.GetByteCount(cp, length);
             var buffer = new byte[count + (zeroTerminated ? 1 : 0)];
             fixed (byte* bp = buffer)
+            {
                 encoding.GetBytes(cp, length, bp, buffer.Length);
+            }
 
             if (zeroTerminated)
                 buffer[buffer.Length - 1] = 0;

@@ -24,12 +24,12 @@ public sealed class GapBuffer<T> : IEnumerable<T>
 
     private void EnsureGapCapacity(int length)
     {
-        if (length > (gapEnd - gapStart))
+        if (length > gapEnd - gapStart)
         {
             // How much to grow the buffer is a tricky question.
             // Our current algo will double the capacity unless that's not enough.
             var minCapacity = Count + length;
-            var newCapacity = (buffer.Length * 2);
+            var newCapacity = buffer.Length * 2;
             if (newCapacity < minCapacity)
             {
                 newCapacity = minCapacity;
@@ -40,15 +40,15 @@ public sealed class GapBuffer<T> : IEnumerable<T>
 
             Array.Copy(buffer, 0, newBuffer, 0, gapStart);
             Array.Copy(buffer, gapEnd, newBuffer, newGapEnd, newBuffer.Length - newGapEnd);
-            this.buffer = newBuffer;
-            this.gapEnd = newGapEnd;
+            buffer = newBuffer;
+            gapEnd = newGapEnd;
         }
     }
 
     public IEnumerator<T> GetEnumerator()
     {
         var count = Count;
-        for (int i = 0; i < count; i++)
+        for (var i = 0; i < count; i++)
             yield return this[i];
 
         yield break;
@@ -56,7 +56,7 @@ public sealed class GapBuffer<T> : IEnumerable<T>
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-        return this.GetEnumerator();
+        return GetEnumerator();
     }
 
     public void Insert(int index, T item)
@@ -85,7 +85,7 @@ public sealed class GapBuffer<T> : IEnumerable<T>
     {
         if (index != gapStart)
         {
-            if ((gapEnd - gapStart) == 0)
+            if (gapEnd - gapStart == 0)
             {
                 // There is no gap
                 gapStart = index;
@@ -94,8 +94,8 @@ public sealed class GapBuffer<T> : IEnumerable<T>
             else if (index < gapStart)
             {
                 // Move gap left (copy contents right)
-                var length = (gapStart - index);
-                var deltaLength = (gapEnd - gapStart < length ? gapEnd - gapStart : length);
+                var length = gapStart - index;
+                var deltaLength = gapEnd - gapStart < length ? gapEnd - gapStart : length;
                 Array.Copy(buffer, index, buffer, gapEnd - length, length);
                 gapStart -= length;
                 gapEnd -= length;
@@ -105,8 +105,8 @@ public sealed class GapBuffer<T> : IEnumerable<T>
             else
             {
                 // Move gap right (copy contents left)
-                var length = (index - gapStart);
-                var deltaIndex = (index > gapEnd ? index : gapEnd);
+                var length = index - gapStart;
+                var deltaIndex = index > gapEnd ? index : gapEnd;
                 Array.Copy(buffer, gapEnd, buffer, gapStart, length);
                 gapStart += length;
                 gapEnd += length;
@@ -165,7 +165,7 @@ public sealed class GapBuffer<T> : IEnumerable<T>
         set
         {
             if (index >= gapStart)
-                index += (gapEnd - gapStart);
+                index += gapEnd - gapStart;
 
             buffer[index] = value;
         }
@@ -173,7 +173,7 @@ public sealed class GapBuffer<T> : IEnumerable<T>
 
     public GapBuffer(int capacity = 0)
     {
-        this.buffer = new T[capacity];
-        this.gapEnd = buffer.Length;
+        buffer = new T[capacity];
+        gapEnd = buffer.Length;
     }
 }

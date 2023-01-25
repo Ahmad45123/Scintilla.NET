@@ -32,19 +32,29 @@ class Tuple<T1, T2> : IFormattable
     public override int GetHashCode()
     {
         var hc = 0;
-        if (!object.ReferenceEquals(Item1, null))
+        if (!ReferenceEquals(Item1, null))
+        {
             hc = Item1Comparer.GetHashCode(Item1);
-        if (!object.ReferenceEquals(Item2, null))
+        }
+
+        if (!ReferenceEquals(Item2, null))
+        {
             hc = (hc << 3) ^ Item2Comparer.GetHashCode(Item2);
+        }
+
         return hc;
     }
     public override bool Equals(object obj)
     {
         var other = obj as Tuple<T1, T2>;
-        if (object.ReferenceEquals(other, null))
+        if (ReferenceEquals(other, null))
+        {
             return false;
+        }
         else
+        {
             return Item1Comparer.Equals(Item1, other.Item1) && Item2Comparer.Equals(Item2, other.Item2);
+        }
     }
     #endregion
 

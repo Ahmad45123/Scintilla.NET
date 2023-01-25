@@ -14,7 +14,7 @@ public abstract class MarginBase<TMarkers, TStyles, TIndicators, TLines, TMargin
     where TLines : LineCollectionBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>, IEnumerable
     where TMargins : MarginCollectionBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>, IEnumerable
     where TSelections : SelectionCollectionBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>, IEnumerable
-    where TEventArgs : System.EventArgs
+    where TEventArgs : EventArgs
     where TMarker: MarkerBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>
     where TStyle : StyleBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>
     where TIndicator : IndicatorBase<TMarkers, TStyles, TIndicators, TLines, TMargins, TSelections, TEventArgs, TMarker, TStyle, TIndicator, TLine, TMargin, TSelection, TBitmap, TColor>
@@ -74,11 +74,11 @@ public abstract class MarginBase<TMarkers, TStyles, TIndicators, TLines, TMargin
     {
         get
         {
-            return (scintilla.DirectMessage(SCI_GETMARGINSENSITIVEN, new IntPtr(Index)) != IntPtr.Zero);
+            return scintilla.DirectMessage(SCI_GETMARGINSENSITIVEN, new IntPtr(Index)) != IntPtr.Zero;
         }
         set
         {
-            var sensitive = (value ? new IntPtr(1) : IntPtr.Zero);
+            var sensitive = value ? new IntPtr(1) : IntPtr.Zero;
             scintilla.DirectMessage(SCI_SETMARGINSENSITIVEN, new IntPtr(Index), sensitive);
         }
     }
@@ -91,7 +91,7 @@ public abstract class MarginBase<TMarkers, TStyles, TIndicators, TLines, TMargin
     {
         get
         {
-            return (MarginType)(scintilla.DirectMessage(SCI_GETMARGINTYPEN, new IntPtr(Index)));
+            return (MarginType)scintilla.DirectMessage(SCI_GETMARGINTYPEN, new IntPtr(Index));
         }
         set
         {

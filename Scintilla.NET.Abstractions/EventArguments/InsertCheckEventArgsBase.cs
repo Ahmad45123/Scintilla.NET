@@ -60,7 +60,9 @@ public abstract class InsertCheckEventArgsBase<TMarkers, TStyles, TIndicators, T
 
             var bytes = HelpersGeneral.GetBytes(CachedText, scintilla.Encoding, zeroTerminated: false);
             fixed (byte* bp = bytes)
+            {
                 scintilla.DirectMessage(SCI_CHANGEINSERTION, new IntPtr(bytes.Length), new IntPtr(bp));
+            }
         }
     }
 
