@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using Scintilla.NET.Abstractions;
 using Scintilla.NET.Abstractions.Collections;
+using Scintilla.NET.WinForms.EventArguments;
 
 namespace Scintilla.NET.WinForms;
 

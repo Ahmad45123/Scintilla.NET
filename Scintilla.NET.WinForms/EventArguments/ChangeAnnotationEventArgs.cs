@@ -1,6 +1,6 @@
 ﻿using Scintilla.NET.Abstractions.EventArguments;
 
-namespace Scintilla.NET.WinForms;
+namespace Scintilla.NET.WinForms.EventArguments;
 
 /// <summary>
 /// Provides data for the <see cref="Scintilla.ChangeAnnotation" /> event.

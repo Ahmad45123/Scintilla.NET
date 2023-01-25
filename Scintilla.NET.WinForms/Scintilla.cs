@@ -15,6 +15,7 @@ using Scintilla.NET.Abstractions;
 using Scintilla.NET.Abstractions.Enumerations;
 using Scintilla.NET.Abstractions.Interfaces;
 using Scintilla.NET.Abstractions.Structs;
+using Scintilla.NET.WinForms.EventArguments;
 using static Scintilla.NET.Abstractions.ScintillaConstants;
 using static Scintilla.NET.Abstractions.Classes.ScintillaApiStructs;
 using Bitmap = System.Drawing.Bitmap;
@@ -1553,9 +1554,9 @@ public class Scintilla : Control,
     /// Raises the <see cref="AutoCCancelled" /> event.
     /// </summary>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    protected virtual void OnAutoCCancelled(EventArgs e)
+    protected virtual void OnAutoCCancelled(System.EventArgs e)
     {
-        var handler = Events[autoCCancelledEventKey] as EventHandler<EventArgs>;
+        var handler = Events[autoCCancelledEventKey] as EventHandler<System.EventArgs>;
         if (handler != null)
             handler(this, e);
     }
@@ -1564,9 +1565,9 @@ public class Scintilla : Control,
     /// Raises the <see cref="AutoCCharDeleted" /> event.
     /// </summary>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    protected virtual void OnAutoCCharDeleted(EventArgs e)
+    protected virtual void OnAutoCCharDeleted(System.EventArgs e)
     {
-        var handler = Events[autoCCharDeletedEventKey] as EventHandler<EventArgs>;
+        var handler = Events[autoCCharDeletedEventKey] as EventHandler<System.EventArgs>;
         if (handler != null)
             handler(this, e);
     }
@@ -1619,7 +1620,7 @@ public class Scintilla : Control,
     /// Raises the <see cref="BorderStyleChanged" /> event.
     /// </summary>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    protected virtual void OnBorderStyleChanged(EventArgs e)
+    protected virtual void OnBorderStyleChanged(System.EventArgs e)
     {
         var handler = Events[borderStyleChangedEventKey] as EventHandler;
         if (handler != null)
@@ -3572,8 +3573,8 @@ public class Scintilla : Control,
     /// Gets or sets the automatic folding flags.
     /// </summary>
     /// <returns>
-    /// A bitwise combination of the <see cref="Scintilla.NET.Abstractions.Enumerations.AutomaticFold" /> enumeration.
-    /// The default is <see cref="Scintilla.NET.Abstractions.Enumerations.AutomaticFold.None" />.
+    /// A bitwise combination of the <see cref="Abstractions.Enumerations.AutomaticFold" /> enumeration.
+    /// The default is <see cref="Abstractions.Enumerations.AutomaticFold.None" />.
     /// </returns>
     [DefaultValue(AutomaticFold.None)]
     [Category("Behavior")]
@@ -3967,7 +3968,7 @@ public class Scintilla : Control,
     /// Gets or sets the caret display style.
     /// </summary>
     /// <returns>
-    /// One of the <see cref="Scintilla.NET.Abstractions.Enumerations.CaretStyle" /> enumeration values.
+    /// One of the <see cref="Abstractions.Enumerations.CaretStyle" /> enumeration values.
     /// The default is <see cref="Line" />.
     /// </returns>
     [DefaultValue(CaretStyle.Line)]
@@ -4190,8 +4191,8 @@ public class Scintilla : Control,
     /// <returns>The current <see cref="Document" />.</returns>
     /// <remarks>
     /// Setting this property is equivalent to calling <see cref="ReleaseDocument" /> on the current document, and
-    /// calling <see cref="CreateDocument" /> if the new <paramref name="value" /> is <see cref="Scintilla.NET.Abstractions.Structs.Document.Empty" /> or
-    /// <see cref="AddRefDocument" /> if the new <paramref name="value" /> is not <see cref="Scintilla.NET.Abstractions.Structs.Document.Empty" />.
+    /// calling <see cref="CreateDocument" /> if the new <paramref name="value" /> is <see cref="Abstractions.Structs.Document.Empty" /> or
+    /// <see cref="AddRefDocument" /> if the new <paramref name="value" /> is not <see cref="Abstractions.Structs.Document.Empty" />.
     /// </remarks>
     [Browsable(false)]
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -4270,8 +4271,8 @@ public class Scintilla : Control,
     /// Gets or sets the mode for indicating long lines.
     /// </summary>
     /// <returns>
-    /// One of the <see cref="Scintilla.NET.Abstractions.Enumerations.EdgeMode" /> enumeration values.
-    /// The default is <see cref="Scintilla.NET.Abstractions.Enumerations.EdgeMode.None" />.
+    /// One of the <see cref="Abstractions.Enumerations.EdgeMode" /> enumeration values.
+    /// The default is <see cref="Abstractions.Enumerations.EdgeMode.None" />.
     /// </returns>
     [DefaultValue(EdgeMode.None)]
     [Category("Long Lines")]
@@ -4446,8 +4447,8 @@ public class Scintilla : Control,
     /// Gets or sets font quality (anti-aliasing method) used to render fonts.
     /// </summary>
     /// <returns>
-    /// One of the <see cref="Scintilla.NET.Abstractions.Enumerations.FontQuality" /> enumeration values.
-    /// The default is <see cref="Scintilla.NET.Abstractions.Enumerations.FontQuality.Default" />.
+    /// One of the <see cref="Abstractions.Enumerations.FontQuality" /> enumeration values.
+    /// The default is <see cref="Abstractions.Enumerations.FontQuality.Default" />.
     /// </returns>
     [DefaultValue(FontQuality.Default)]
     [Category("Misc")]
@@ -4526,8 +4527,8 @@ public class Scintilla : Control,
     /// Gets or sets the strategy used to perform styling using application idle time.
     /// </summary>
     /// <returns>
-    /// One of the <see cref="Scintilla.NET.Abstractions.Enumerations.IdleStyling" /> enumeration values.
-    /// The default is <see cref="Scintilla.NET.Abstractions.Enumerations.IdleStyling.None" />.
+    /// One of the <see cref="Abstractions.Enumerations.IdleStyling" /> enumeration values.
+    /// The default is <see cref="Abstractions.Enumerations.IdleStyling.None" />.
     /// </returns>
     [DefaultValue(IdleStyling.None)]
     [Category("Misc")]
@@ -5912,7 +5913,7 @@ public class Scintilla : Control,
     /// </summary>
     /// <returns>The indented size of wrapped sublines measured in pixels. The default is 0.</returns>
     /// <remarks>
-    /// Setting <see cref="WrapVisualFlags" /> to <see cref="Scintilla.NET.Abstractions.Enumerations.WrapVisualFlags.Start" /> will add an
+    /// Setting <see cref="WrapVisualFlags" /> to <see cref="Abstractions.Enumerations.WrapVisualFlags.Start" /> will add an
     /// additional 1 pixel to the value specified.
     /// </remarks>
     [DefaultValue(0)]
@@ -5935,8 +5936,8 @@ public class Scintilla : Control,
     /// Gets or sets the wrap visual flags.
     /// </summary>
     /// <returns>
-    /// A bitwise combination of the <see cref="Scintilla.NET.Abstractions.Enumerations.WrapVisualFlags" /> enumeration.
-    /// The default is <see cref="Scintilla.NET.Abstractions.Enumerations.WrapVisualFlags.None" />.
+    /// A bitwise combination of the <see cref="Abstractions.Enumerations.WrapVisualFlags" /> enumeration.
+    /// The default is <see cref="Abstractions.Enumerations.WrapVisualFlags.None" />.
     /// </returns>
     [DefaultValue(WrapVisualFlags.None)]
     [Category("Line Wrapping")]
@@ -5959,8 +5960,8 @@ public class Scintilla : Control,
     /// Gets or sets additional location options when displaying wrap visual flags.
     /// </summary>
     /// <returns>
-    /// One of the <see cref="Scintilla.NET.Abstractions.Enumerations.WrapVisualFlagLocation" /> enumeration values.
-    /// The default is <see cref="Scintilla.NET.Abstractions.Enumerations.WrapVisualFlagLocation.Default" />.
+    /// One of the <see cref="Abstractions.Enumerations.WrapVisualFlagLocation" /> enumeration values.
+    /// The default is <see cref="Abstractions.Enumerations.WrapVisualFlagLocation.Default" />.
     /// </returns>
     [DefaultValue(WrapVisualFlagLocation.Default)]
     [Category("Line Wrapping")]
@@ -6028,7 +6029,7 @@ public class Scintilla : Control,
     /// </summary>
     [Category("Notifications")]
     [Description("Occurs when an autocompletion list is cancelled.")]
-    public event EventHandler<EventArgs> AutoCCancelled
+    public event EventHandler<System.EventArgs> AutoCCancelled
     {
         add
         {
@@ -6045,7 +6046,7 @@ public class Scintilla : Control,
     /// </summary>
     [Category("Notifications")]
     [Description("Occurs when the user deletes a character while an autocompletion list is active.")]
-    public event EventHandler<EventArgs> AutoCCharDeleted
+    public event EventHandler<System.EventArgs> AutoCCharDeleted
     {
         add
         {
