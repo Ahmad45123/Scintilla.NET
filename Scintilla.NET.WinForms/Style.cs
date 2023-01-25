@@ -3,7 +3,7 @@ using System.Drawing;
 using Scintilla.NET.Abstractions;
 using Scintilla.NET.Abstractions.Collections;
 
-namespace ScintillaNET;
+namespace Scintilla.NET.WinForms;
 
 /// <summary>
 /// A style definition in a <see cref="Scintilla" /> control.

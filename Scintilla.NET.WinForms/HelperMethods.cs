@@ -3,7 +3,7 @@ using System.Linq;
 using Scintilla.NET.Abstractions;
 using Scintilla.NET.Abstractions.Enumerations;
 
-namespace ScintillaNET;
+namespace Scintilla.NET.WinForms;
 
 /// <summary>
 /// Helper methods for the <see cref="Scintilla"/> control.

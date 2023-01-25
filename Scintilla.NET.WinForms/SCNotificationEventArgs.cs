@@ -1,7 +1,7 @@
 ﻿using Scintilla.NET.Abstractions.EventArguments;
 using static Scintilla.NET.Abstractions.Classes.ScintillaApiStructs;
 
-namespace ScintillaNET;
+namespace Scintilla.NET.WinForms;
 
 /// <summary>
 /// Notifications are sent (fired) from the Scintilla control to its container when an event has occurred that may interest the container. This class cannot be inherited.

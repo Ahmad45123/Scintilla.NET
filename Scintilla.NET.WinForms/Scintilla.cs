@@ -20,7 +20,7 @@ using static Scintilla.NET.Abstractions.Classes.ScintillaApiStructs;
 using Bitmap = System.Drawing.Bitmap;
 using TabDrawMode = Scintilla.NET.Abstractions.Enumerations.TabDrawMode;
 
-namespace ScintillaNET;
+namespace Scintilla.NET.WinForms;
 
 /// <summary>
 /// Represents a Scintilla editor control.
@@ -87,7 +87,6 @@ public class Scintilla : Control,
     private static readonly string modulePathLexilla;
 
     private static IntPtr moduleHandle;
-    private static NativeMethods.Scintilla_DirectFunction directFunction;
     private static IntPtr lexillaHandle;
     private static Lexilla lexilla;
 
@@ -865,22 +864,22 @@ public class Scintilla : Control,
     public IntPtr DirectMessage(int msg, IntPtr wParam, IntPtr lParam)
     {
         // If the control handle, ptr, direct function, etc... hasn't been created yet, it will be now.
-        var result = DirectMessage(SciPointer, msg, wParam, lParam);
+        var result = DirectFunction(SciPointer, msg, wParam, lParam);
         return result;
     }
 
     /// <inheritdoc />
-    IntPtr IScintillaApi.DirectMessage(IntPtr scintillaPointer, int message, IntPtr wParam, IntPtr lParam)
+    public IntPtr DirectMessage(IntPtr scintillaPointer, int message, IntPtr wParam, IntPtr lParam)
     {
-        return DirectMessage(scintillaPointer, message, wParam, lParam);
+        return DirectFunction(scintillaPointer, message, wParam, lParam);
     }
 
-    private static IntPtr DirectMessage(IntPtr sciPtr, int msg, IntPtr wParam, IntPtr lParam)
-    {
-        // Like Win32 SendMessage but directly to Scintilla
-        var result = directFunction(sciPtr, msg, wParam, lParam);
-        return result;
-    }
+    //private static IntPtr DirectMessage(IntPtr sciPtr, int msg, IntPtr wParam, IntPtr lParam)
+    //{
+    //    // Like Win32 SendMessage but directly to Scintilla
+    //    var result = directFunction(sciPtr, msg, wParam, lParam);
+    //    return result;
+    //}
 
     /// <summary>
     /// Releases the unmanaged resources used by the Control and its child controls and optionally releases the managed resources.
@@ -3579,7 +3578,7 @@ public class Scintilla : Control,
     [DefaultValue(AutomaticFold.None)]
     [Category("Behavior")]
     [Description("Options for allowing the control to automatically handle folding.")]
-    [TypeConverter(typeof(FlagsEnumTypeConverter.FlagsEnumConverter))]
+    [TypeConverter(typeof(FlagsEnumConverter))]
     public AutomaticFold AutomaticFold
     {
         get
@@ -4011,6 +4010,9 @@ public class Scintilla : Control,
         }
     }
 
+    [DllImport("Scintilla.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode, EntryPoint = "Scintilla_DirectFunction")]
+    private static extern IntPtr DirectFunction(IntPtr sciPtr, int msg, IntPtr wParam, IntPtr lParam);
+
     /// <summary>
     /// Gets the required creation parameters when the control handle is created.
     /// </summary>
@@ -4054,9 +4056,9 @@ public class Scintilla : Control,
                 lexilla = new Lexilla(lexillaHandle);
 
                 // Create a managed callback
-                directFunction = (NativeMethods.Scintilla_DirectFunction)Marshal.GetDelegateForFunctionPointer(
-                    directFunctionPointer,
-                    typeof(NativeMethods.Scintilla_DirectFunction));
+                //directFunction = (NativeMethods.Scintilla_DirectFunction)Marshal.GetDelegateForFunctionPointer(
+                //    directFunctionPointer,
+                //    typeof(NativeMethods.Scintilla_DirectFunction));
             }
 
             CreateParams cp = base.CreateParams;
@@ -4799,7 +4801,7 @@ public class Scintilla : Control,
     [DefaultValue(LineEndType.Default)]
     [Category("Line Endings")]
     [Description("Line endings types interpreted by the control.")]
-    [TypeConverter(typeof(FlagsEnumTypeConverter.FlagsEnumConverter))]
+    [TypeConverter(typeof(FlagsEnumConverter))]
     public LineEndType LineEndTypesAllowed
     {
         get
@@ -5206,7 +5208,7 @@ public class Scintilla : Control,
         }
     }
 
-    private IntPtr SciPointer
+    public IntPtr SciPointer
     {
         get
         {
@@ -5746,7 +5748,7 @@ public class Scintilla : Control,
     [DefaultValue(VirtualSpace.None)]
     [Category("Behavior")]
     [Description("Options for allowing the caret to move beyond the end of each line.")]
-    [TypeConverter(typeof(FlagsEnumTypeConverter.FlagsEnumConverter))]
+    [TypeConverter(typeof(FlagsEnumConverter))]
     public VirtualSpace VirtualSpaceOptions
     {
         get
@@ -5939,7 +5941,7 @@ public class Scintilla : Control,
     [DefaultValue(WrapVisualFlags.None)]
     [Category("Line Wrapping")]
     [Description("The visual indicator displayed on a wrapped line.")]
-    [TypeConverter(typeof(FlagsEnumTypeConverter.FlagsEnumConverter))]
+    [TypeConverter(typeof(FlagsEnumConverter))]
     public WrapVisualFlags WrapVisualFlags
     {
         get

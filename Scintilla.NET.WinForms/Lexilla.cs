@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
-namespace ScintillaNET;
+namespace Scintilla.NET.WinForms;
 
 /// <summary>
 /// A class containing methods for interacting with the Lexilla library.

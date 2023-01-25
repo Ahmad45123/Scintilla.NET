@@ -1,7 +1,7 @@
- using System;
- using System.Runtime.InteropServices;
+using System;
+using System.Runtime.InteropServices;
 
- namespace ScintillaNET; 
+namespace Scintilla.NET.WinForms; 
 
  internal static class WinApiHelpers
  {

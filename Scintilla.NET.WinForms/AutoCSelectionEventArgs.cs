@@ -4,7 +4,7 @@ using Scintilla.NET.Abstractions;
 using Scintilla.NET.Abstractions.Enumerations;
 using Scintilla.NET.Abstractions.EventArguments;
 
-namespace ScintillaNET;
+namespace Scintilla.NET.WinForms;
 
 /// <summary>
 /// Provides data for the <see cref="Scintilla.AutoCSelection" /> event.

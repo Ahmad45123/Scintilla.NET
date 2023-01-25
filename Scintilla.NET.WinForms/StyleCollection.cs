@@ -2,7 +2,7 @@
 using Scintilla.NET.Abstractions;
 using Scintilla.NET.Abstractions.Collections;
 
-namespace ScintillaNET;
+namespace Scintilla.NET.WinForms;
 
 /// <summary>
 /// An immutable collection of style definitions in a <see cref="Scintilla" /> control.

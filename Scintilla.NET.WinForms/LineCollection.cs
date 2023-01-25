@@ -1,10 +1,10 @@
-﻿using Scintilla.NET.Abstractions;
-using System.Drawing;
+﻿using System.Drawing;
+using Scintilla.NET.Abstractions;
 using Scintilla.NET.Abstractions.Collections;
 using Scintilla.NET.Abstractions.UtilityClasses;
 using static Scintilla.NET.Abstractions.ScintillaConstants;
 
-namespace ScintillaNET;
+namespace Scintilla.NET.WinForms;
 
 /// <summary>
 /// An immutable collection of lines of text in a <see cref="Scintilla" /> control.

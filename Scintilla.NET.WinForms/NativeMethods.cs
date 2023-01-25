@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Scintilla.NET.Abstractions;
 
-namespace ScintillaNET;
+namespace Scintilla.NET.WinForms;
 
 public static class NativeMethods
 {

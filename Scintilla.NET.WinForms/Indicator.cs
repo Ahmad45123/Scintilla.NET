@@ -4,7 +4,7 @@ using Scintilla.NET.Abstractions;
 using Scintilla.NET.Abstractions.Collections;
 using static Scintilla.NET.Abstractions.ScintillaConstants;
 
-namespace ScintillaNET;
+namespace Scintilla.NET.WinForms;
 
 /// <summary>
 /// Represents an indicator in a <see cref="Scintilla" /> control.

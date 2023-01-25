@@ -1,9 +1,9 @@
 ﻿// http://stackoverflow.com/questions/188120/can-i-specify-my-explicit-type-comparator-inline
 
-namespace ScintillaNET;
-
 using System;
 using System.Collections.Generic;
+
+namespace Scintilla.NET.WinForms;
 
 /// <summary>
 /// Non-generic class to produce instances of the generic class,

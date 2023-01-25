@@ -5,12 +5,11 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Scintilla.NET.Abstractions;
 using Scintilla.NET.Abstractions.Enumerations;
 using static Scintilla.NET.Abstractions.ScintillaConstants;
-using static ScintillaNET.Helpers;
+using static Scintilla.NET.WinForms.Helpers;
 
-namespace ScintillaNET;
+namespace Scintilla.NET.WinForms;
 internal class HelperWinForms
 {
     

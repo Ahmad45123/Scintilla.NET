@@ -25,7 +25,6 @@ SOFTWARE.
 #endregion
 
 using System.Collections;
-using System.Text;
 using Scintilla.NET.Abstractions.Collections;
 using Scintilla.NET.Abstractions.Enumerations;
 using Scintilla.NET.Abstractions.Interfaces;

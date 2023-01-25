@@ -2,7 +2,7 @@
 using System.IO;
 using Scintilla.NET.Abstractions;
 
-namespace ScintillaNET;
+namespace Scintilla.NET.WinForms;
 
 /// <summary>
 /// Implements a TextReader that reads from a Scintilla control.

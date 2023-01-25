@@ -1,8 +1,8 @@
-﻿using Scintilla.NET.Abstractions;
-using System.Drawing;
+﻿using System.Drawing;
+using Scintilla.NET.Abstractions;
 using Scintilla.NET.Abstractions.Collections;
 
-namespace ScintillaNET;
+namespace Scintilla.NET.WinForms;
 
 /// <summary>
 /// Represents a line of text in a <see cref="Scintilla" /> control.
